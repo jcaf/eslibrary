@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="HttpTransaction" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Release">
+				<Option output="bin/Release/HttpTransaction" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Release/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O2" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-Wall" />
+			<Add option="-fexceptions" />
+		</Compiler>
+		<Unit filename="main.cpp" />
+		<Unit filename="src/ethernet.cpp" />
+		<Unit filename="src/ethernet.h" />
+		<Unit filename="src/http_client.cpp" />
+		<Unit filename="src/http_client.h" />
+		<Unit filename="src/http_trx.h" />
+		<Unit filename="src/iot/http.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src/iot/http.h" />
+		<Unit filename="src/iot/http_header_lines.h" />
+		<Unit filename="src/iot/http_msg_body.h" />
+		<Unit filename="src/iot/http_rqstline.h" />
+		<Unit filename="src/iot/ntsetting.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src/iot/ntsetting.h" />
+		<Unit filename="src/iot/tcp_client.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src/iot/tcp_client.h" />
+		<Unit filename="src/tcp_client_connect.cpp" />
+		<Unit filename="src/tcp_client_connect.h" />
+		<Extensions>
+			<code_completion />
+			<envvars />
+			<debugger />
+			<lib_finder disable_auto="1" />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>
