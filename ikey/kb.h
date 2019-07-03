@@ -6,22 +6,18 @@
     void key_initialization(void);
     void kb_job(void);
     void kb_flush(void);
-
     //void kb_change_keyDo(const PTRFX_retVOID const *keyDo);
     //void kb_change_keyDo(PTRFX_retVOID *keyDo);
     //void kb_change_keyDo_pgm(PTRFX_retVOID const *  keyDo);
 
     void kb_processKeyRead_D(void);
-
-
     /*
-        PORTWxKBCOL_1 PORTWxKBCOL_2 PORTWxKBCOL_3 PORTWxKBCOL_4
+    PORTWxKBCOL_1 PORTWxKBCOL_2 PORTWxKBCOL_3 PORTWxKBCOL_4
     PORTWxKBFIL_1 	1  2  3  4
     PORTWxKBFIL_2 	5  6  7  8
     PORTWxKBFIL_3 	9  10 11 12
     PORTWxKBFIL_4 	13 14 15 16
      */
-
     #define PORTWxKBFIL_1 		PORTD
     #define PORTRxKBFIL_1 		PIND
     #define CONFIGIOxKBFIL_1 	DDRD

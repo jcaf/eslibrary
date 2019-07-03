@@ -5,17 +5,14 @@
 #define KB_KEY_PINLEVEL_PRESSED 0
 #define KB_KEY_PINLEVEL_RELEASED 1
 
-
 #define KB_KEY_SCAN_COUNT_DEBOUNCE 4
 
 //set software
 #define KB_KEY_STATE_PRESSED 1
 #define KB_KEY_STATE_RELEASED 0
 
-
 #define KBAPP_READY2READ	1
 #define KBAPP_ALREADYREAD	0
-
 
 #define ms 0.001
 #define _SYS_TIMMER_X_KEYBOARD_		(5*ms)

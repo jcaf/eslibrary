@@ -1,7 +1,8 @@
 #ifndef SYSTEM_H_
 #define SYSTEM_H
 
-#define F_CPU 48000000UL	//16000000UL		//AVR-GCC
+//define now is in local:"main.h"
+//#define F_CPU 48000000UL	//16000000UL		//AVR-GCC
 #define _XTAL_FREQ F_CPU	//C PIC
 
 
