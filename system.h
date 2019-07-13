@@ -5,7 +5,6 @@
 //#define F_CPU 48000000UL	//16000000UL		//AVR-GCC
 #define _XTAL_FREQ F_CPU	//C PIC
 
-
 #define OR_BITWISE(REG, KTE)  	do{REG |= KTE;}while(0)
 #define AND_BITWISE(REG, KTE)	do{REG &= KTE;}while(0)
 #define XOR_BITWISE(REG, KTE) 	do{REG ^= KTE;}while(0)
@@ -40,6 +39,7 @@
 
 	//Timer CPU INSTRUCCTION CYCLE = N Q_CYCLES
 	#define Q_CYCLE 4   //PIC ARCH.
+	#include <xc.h>
 
 #elif defined(__GNUC__) && defined(__AVR__)
 
@@ -55,17 +55,17 @@
 	#define FLASH_DECLARE(x) x __attribute__((__progmem__))
 	#define NOP() do{asm volatile ("nop");}while(0)
 
-	#include <avr/io.h>
-	#include <avr/interrupt.h>
-    #include <avr/pgmspace.h>
-    #include <avr/eeprom.h>
-    #include <util/delay.h>
-	#define __delay_ms(x) _delay_ms(x)
-	#define __delay_us(x) _delay_us(x)
 
 	//Timer CPU INSTRUCCTION CYCLE = N Q_CYCLES
 	#define Q_CYCLE 1   //AVR ARCH.
-    #define TMR8B_OVF(T_DESIRED, PREESCALER)  (256 - (T_DESIRED*F_CPU/(PREESCALER*Q_CYCLE)) )
+	//	
+	#include <avr/io.h>
+	#include <avr/interrupt.h>
+    	#include <avr/pgmspace.h>
+	#include <avr/eeprom.h>
+    	#include <util/delay.h>
+	#define __delay_ms(x) _delay_ms(x)
+	#define __delay_us(x) _delay_us(x)
 
 /*
 #elif defined(__ICCAVR__) && defined(AVR)
@@ -88,9 +88,13 @@
 */
 #endif
 
-#include <string.h>
-#include <stdlib.h>
+
 #include <stdint.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define TMR8B_OVF(T_DESIRED, PREESCALER) (uint16_t) ((1UL<<8) - (T_DESIRED*F_CPU/(PREESCALER*Q_CYCLE)) )
+#define TMR16B_OVF(T_DESIRED, PREESCALER) (uint16_t)((1UL<<16) - ( T_DESIRED *F_CPU / (PREESCALER*Q_CYCLE)) )
 
 #define MHz 1000000
 #define KHz 1000

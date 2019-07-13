@@ -6,7 +6,7 @@ Reglas:
 #define KB_H_
     #include "types.h"
 
-    #define KB_NUM_KEYS 16  //Total Number of keys
+    #define KB_NUM_KEYS 5  //Total Number of keys
 
     //#define iKPAD
     #define iKEY
@@ -278,27 +278,27 @@ Reglas:
     #endif // iKB
 
     #ifdef iKEY
-        #define PORTWxKB_KEY1 		LATC
+        #define PORTWxKB_KEY1 		LATC    //kup
         #define PORTRxKB_KEY1 		PORTC
         #define CONFIGIOxKB_KEY1 	TRISC
         #define PINxKB_KEY1 		4
 
-        #define PORTWxKB_KEY2 		LATC
+        #define PORTWxKB_KEY2 		LATC    //kdwown
         #define PORTRxKB_KEY2 		PORTC
         #define CONFIGIOxKB_KEY2 	TRISC
         #define PINxKB_KEY2 		5
 
-        #define PORTWxKB_KEY3 		LATC
+        #define PORTWxKB_KEY3 		LATC    //k+
         #define PORTRxKB_KEY3 		PORTC
         #define CONFIGIOxKB_KEY3 	TRISC
         #define PINxKB_KEY3 		6
 
-        #define PORTWxKB_KEY4 		LATC
+        #define PORTWxKB_KEY4 		LATC    //k-
         #define PORTRxKB_KEY4 		PORTC
         #define CONFIGIOxKB_KEY4 	TRISC
         #define PINxKB_KEY4 		7
 
-        #define PORTWxKB_KEY5 		LATD
+        #define PORTWxKB_KEY5 		LATD    //kenter/flush
         #define PORTRxKB_KEY5 		PORTD
         #define CONFIGIOxKB_KEY5 	TRISD
         #define PINxKB_KEY5 		4

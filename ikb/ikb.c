@@ -1,3 +1,4 @@
+//#include "../system.h"
 #include "system.h"
 #include "ikb.h"
 
@@ -27,7 +28,7 @@
         struct _repp
         {
             uint16_t to_start;
-            uint8_t after_start;
+            uint16_t after_start;//changed from 8 to 16 bits
         } repp;
     };
     volatile struct _key key[KB_NUM_KEYS];
@@ -190,7 +191,27 @@
 #endif // iKB
 
 #ifdef iKEY
-
+    static inline uint8_t keyRead_pin_key1(void)
+    {
+        return ReadPin(PORTRxKB_KEY1, PINxKB_KEY1);
+    }
+    static inline uint8_t keyRead_pin_key2(void)
+    {
+        return ReadPin(PORTRxKB_KEY2, PINxKB_KEY2);
+    }
+    static inline uint8_t keyRead_pin_key3(void)
+    {
+        return ReadPin(PORTRxKB_KEY3, PINxKB_KEY3);
+    }
+    static inline uint8_t keyRead_pin_key4(void)
+    {
+        return ReadPin(PORTRxKB_KEY4, PINxKB_KEY4);
+    }
+    static inline uint8_t keyRead_pin_key5(void)
+    {
+        return ReadPin(PORTRxKB_KEY5, PINxKB_KEY5);
+    }
+   
 #endif // iKEY
 
     void ikb_init(void)
@@ -365,11 +386,30 @@
             */
         #endif // iKPAD
         #ifdef iKEY
+            ConfigInputPin(CONFIGIOxKB_KEY1, PINxKB_KEY1);
+            ConfigInputPin(CONFIGIOxKB_KEY2, PINxKB_KEY2);
+            ConfigInputPin(CONFIGIOxKB_KEY3, PINxKB_KEY3);
+            ConfigInputPin(CONFIGIOxKB_KEY4, PINxKB_KEY4);
+            ConfigInputPin(CONFIGIOxKB_KEY5, PINxKB_KEY5);
+            key[0].keyRead = keyRead_pin_key1;
+            key[1].keyRead = keyRead_pin_key2;
+            key[2].keyRead = keyRead_pin_key3;
+            key[3].keyRead = keyRead_pin_key4;
+            key[4].keyRead = keyRead_pin_key5;
+            
 
+            for (i=0; i<KB_NUM_KEYS; i++)
+            {
+                key[i].bf.OnKeyPressed = 1;
+                key[i].bf.OnKeyPressedAndKeyRelease = 0;
+                key[i].bf.AtTimeExpired = 0;
+                key[i].bf.Reptt = 0;
+                key[i].num_group_x = 0;
+                key[i].repp.to_start= (uint16_t)500.0/5;
+                key[i].repp.after_start = (uint16_t)200.0/5;
+            }
         #endif // iKEY
     }
-
-
 
 void ikb_job(void)
 {
@@ -384,7 +424,6 @@ uint8_t ikb_get_AtTimeExpired_BeforeOrAfter(uint8_t k)
 {
     return key[k].bf.AtTimeExpired_BeforeOrAfter;
 }
-
 uint8_t ikb_key_is_ready2read(uint8_t k)
 {
     return key[k].bf.ReadyToRead;
