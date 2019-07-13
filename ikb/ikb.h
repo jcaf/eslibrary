@@ -8,8 +8,8 @@ Reglas:
 
     #define KB_NUM_KEYS 5  //Total Number of keys
 
-    #define iKPAD
-    //#define iKEY
+    //#define iKPAD
+    #define iKEY
 
     //////////////////////////////////////////////////////////////////////////////////////
     #define KB_PERIODIC_ACCESS		5E-3
@@ -19,8 +19,8 @@ Reglas:
     #define KB_KEY_PINLEVEL_PRESSED 0
     #define KB_KEY_PINLEVEL_RELEASED 1
 
-    #define _FIRE_AT_TIME_THRESHOLD_ 1000E-3/KB_PERIODIC_ACCESS
-    #define _FIRE_AT_TIME_THRESHOLD2_ 3000E-3/KB_PERIODIC_ACCESS
+    #define _FIRE_AT_TIME_THRESHOLD_ (1000E-3/KB_PERIODIC_ACCESS)
+    #define _FIRE_AT_TIME_THRESHOLD2_ (3000E-3/KB_PERIODIC_ACCESS)
     #define KB_BEFORE_THR	0
     #define KB_AFTER_THR	1
     //////////////////////////////////////////////////////////////////////////////////////
@@ -74,168 +74,6 @@ Reglas:
         #define PORTRxKBCOL_3 		PINB
         #define CONFIGIOxKBCOL_3 	DDRB
         #define PINxKBCOL_3 		1
-
-        //////// KEYPAD 4X4 //////////////////////
-        //////////////////////////////////////KEY1
-        #define PORTWxKBFIL_KEY0 	PORTWxKBFIL_0
-        #define PORTRxKBFIL_KEY0 	PORTRxKBFIL_0
-        #define CONFIGIOxKBFIL_KEY0 	CONFIGIOxKBFIL_0
-        #define PINxKBFIL_KEY0 		PINxKBFIL_0
-        //
-        #define PORTWxKBCOL_KEY0 	PORTWxKBCOL_0
-        #define PORTRxKBCOL_KEY0 	PORTRxKBCOL_0
-        #define CONFIGIOxKBCOL_KEY0 	CONFIGIOxKBCOL_0
-        #define PINxKBCOL_KEY0 		PINxKBCOL_0
-        //////////////////////////////////////KEY2
-        #define PORTWxKBFIL_KEY1 	PORTWxKBFIL_0
-        #define PORTRxKBFIL_KEY1 	PORTRxKBFIL_0
-        #define CONFIGIOxKBFIL_KEY1 	CONFIGIOxKBFIL_0
-        #define PINxKBFIL_KEY1 		PINxKBFIL_0
-        //
-        #define PORTWxKBCOL_KEY1 	PORTWxKBCOL_1
-        #define PORTRxKBCOL_KEY1 	PORTRxKBCOL_1
-        #define CONFIGIOxKBCOL_KEY1 	CONFIGIOxKBCOL_1
-        #define PINxKBCOL_KEY1 		PINxKBCOL_1
-        //////////////////////////////////////
-        #define PORTWxKBFIL_KEY2 	PORTWxKBFIL_0
-        #define PORTRxKBFIL_KEY2 	PORTRxKBFIL_0
-        #define CONFIGIOxKBFIL_KEY2 	CONFIGIOxKBFIL_0
-        #define PINxKBFIL_KEY2 		PINxKBFIL_0
-        //
-        #define PORTWxKBCOL_KEY2 	PORTWxKBCOL_2
-        #define PORTRxKBCOL_KEY2 	PORTRxKBCOL_2
-        #define CONFIGIOxKBCOL_KEY2 	CONFIGIOxKBCOL_2
-        #define PINxKBCOL_KEY2 		PINxKBCOL_2
-        //////////////////////////////////////
-        #define PORTWxKBFIL_KEY3 	PORTWxKBFIL_0
-        #define PORTRxKBFIL_KEY3 	PORTRxKBFIL_0
-        #define CONFIGIOxKBFIL_KEY3 	CONFIGIOxKBFIL_0
-        #define PINxKBFIL_KEY3 		PINxKBFIL_0
-        //
-        #define PORTWxKBCOL_KEY3 	PORTWxKBCOL_3
-        #define PORTRxKBCOL_KEY3 	PORTRxKBCOL_3
-        #define CONFIGIOxKBCOL_KEY3 	CONFIGIOxKBCOL_3
-        #define PINxKBCOL_KEY3 		PINxKBCOL_3
-        //////////////////////////////////////
-        #define PORTWxKBFIL_KEY4 	PORTWxKBFIL_1
-        #define PORTRxKBFIL_KEY4 	PORTRxKBFIL_1
-        #define CONFIGIOxKBFIL_KEY4 	CONFIGIOxKBFIL_1
-        #define PINxKBFIL_KEY4 		PINxKBFIL_1
-        //
-        #define PORTWxKBCOL_KEY4 	PORTWxKBCOL_0
-        #define PORTRxKBCOL_KEY4 	PORTRxKBCOL_0
-        #define CONFIGIOxKBCOL_KEY4 	CONFIGIOxKBCOL_0
-        #define PINxKBCOL_KEY4 		PINxKBCOL_0
-        //////////////////////////////////////
-        #define PORTWxKBFIL_KEY5 	PORTWxKBFIL_1
-        #define PORTRxKBFIL_KEY5 	PORTRxKBFIL_1
-        #define CONFIGIOxKBFIL_KEY5 	CONFIGIOxKBFIL_1
-        #define PINxKBFIL_KEY5 		PINxKBFIL_1
-        //
-        #define PORTWxKBCOL_KEY5 	PORTWxKBCOL_1
-        #define PORTRxKBCOL_KEY5 	PORTRxKBCOL_1
-        #define CONFIGIOxKBCOL_KEY5 	CONFIGIOxKBCOL_1
-        #define PINxKBCOL_KEY5 		PINxKBCOL_1
-        //////////////////////////////////////
-        #define PORTWxKBFIL_KEY6 	PORTWxKBFIL_1
-        #define PORTRxKBFIL_KEY6 	PORTRxKBFIL_1
-        #define CONFIGIOxKBFIL_KEY6 	CONFIGIOxKBFIL_1
-        #define PINxKBFIL_KEY6 		PINxKBFIL_1
-        //
-        #define PORTWxKBCOL_KEY6 	PORTWxKBCOL_2
-        #define PORTRxKBCOL_KEY6 	PORTRxKBCOL_2
-        #define CONFIGIOxKBCOL_KEY6 	CONFIGIOxKBCOL_2
-        #define PINxKBCOL_KEY6 		PINxKBCOL_2
-        //////////////////////////////////////
-        #define PORTWxKBFIL_KEY7 	PORTWxKBFIL_1
-        #define PORTRxKBFIL_KEY7 	PORTRxKBFIL_1
-        #define CONFIGIOxKBFIL_KEY7 	CONFIGIOxKBFIL_1
-        #define PINxKBFIL_KEY7 		PINxKBFIL_1
-        //
-        #define PORTWxKBCOL_KEY7 	PORTWxKBCOL_3
-        #define PORTRxKBCOL_KEY7 	PORTRxKBCOL_3
-        #define CONFIGIOxKBCOL_KEY7 	CONFIGIOxKBCOL_3
-        #define PINxKBCOL_KEY7 		PINxKBCOL_3
-        //////////////////////////////////////
-        #define PORTWxKBFIL_KEY8 	PORTWxKBFIL_2
-        #define PORTRxKBFIL_KEY8 	PORTRxKBFIL_2
-        #define CONFIGIOxKBFIL_KEY8 	CONFIGIOxKBFIL_2
-        #define PINxKBFIL_KEY8 		PINxKBFIL_2
-        //
-        #define PORTWxKBCOL_KEY8 	PORTWxKBCOL_0
-        #define PORTRxKBCOL_KEY8 	PORTRxKBCOL_0
-        #define CONFIGIOxKBCOL_KEY8 	CONFIGIOxKBCOL_0
-        #define PINxKBCOL_KEY8 		PINxKBCOL_0
-        //////////////////////////////////////
-        #define PORTWxKBFIL_KEY9	PORTWxKBFIL_2
-        #define PORTRxKBFIL_KEY9	PORTRxKBFIL_2
-        #define CONFIGIOxKBFIL_KEY9	CONFIGIOxKBFIL_2
-        #define PINxKBFIL_KEY9		PINxKBFIL_2
-        //
-        #define PORTWxKBCOL_KEY9	PORTWxKBCOL_1
-        #define PORTRxKBCOL_KEY9	PORTRxKBCOL_1
-        #define CONFIGIOxKBCOL_KEY9	CONFIGIOxKBCOL_1
-        #define PINxKBCOL_KEY9		PINxKBCOL_1
-        //////////////////////////////////////
-        #define PORTWxKBFIL_KEY10	PORTWxKBFIL_2
-        #define PORTRxKBFIL_KEY10	PORTRxKBFIL_2
-        #define CONFIGIOxKBFIL_KEY10	CONFIGIOxKBFIL_2
-        #define PINxKBFIL_KEY10		PINxKBFIL_2
-        //
-        #define PORTWxKBCOL_KEY10	PORTWxKBCOL_2
-        #define PORTRxKBCOL_KEY10	PORTRxKBCOL_2
-        #define CONFIGIOxKBCOL_KEY10	CONFIGIOxKBCOL_2
-        #define PINxKBCOL_KEY10		PINxKBCOL_2
-        //////////////////////////////////////
-        #define PORTWxKBFIL_KEY11	PORTWxKBFIL_2
-        #define PORTRxKBFIL_KEY11	PORTRxKBFIL_2
-        #define CONFIGIOxKBFIL_KEY11	CONFIGIOxKBFIL_2
-        #define PINxKBFIL_KEY11		PINxKBFIL_2
-        //
-        #define PORTWxKBCOL_KEY11	PORTWxKBCOL_3
-        #define PORTRxKBCOL_KEY11	PORTRxKBCOL_3
-        #define CONFIGIOxKBCOL_KEY11	CONFIGIOxKBCOL_3
-        #define PINxKBCOL_KEY11		PINxKBCOL_3
-        //////////////////////////////////////
-        #define PORTWxKBFIL_KEY12	PORTWxKBFIL_3
-        #define PORTRxKBFIL_KEY12	PORTRxKBFIL_3
-        #define CONFIGIOxKBFIL_KEY12	CONFIGIOxKBFIL_3
-        #define PINxKBFIL_KEY12		PINxKBFIL_3
-        //
-        #define PORTWxKBCOL_KEY12	PORTWxKBCOL_0
-        #define PORTRxKBCOL_KEY12	PORTRxKBCOL_0
-        #define CONFIGIOxKBCOL_KEY12	CONFIGIOxKBCOL_0
-        #define PINxKBCOL_KEY12		PINxKBCOL_0
-        //////////////////////////////////////
-        #define PORTWxKBFIL_KEY13 	PORTWxKBFIL_3
-        #define PORTRxKBFIL_KEY13	PORTRxKBFIL_3
-        #define CONFIGIOxKBFIL_KEY13	CONFIGIOxKBFIL_3
-        #define PINxKBFIL_KEY13		PINxKBFIL_3
-        //
-        #define PORTWxKBCOL_KEY13	PORTWxKBCOL_1
-        #define PORTRxKBCOL_KEY13	PORTRxKBCOL_1
-        #define CONFIGIOxKBCOL_KEY13	CONFIGIOxKBCOL_1
-        #define PINxKBCOL_KEY13		PINxKBCOL_1
-        //////////////////////////////////////
-        #define PORTWxKBFIL_KEY14	PORTWxKBFIL_3
-        #define PORTRxKBFIL_KEY14	PORTRxKBFIL_3
-        #define CONFIGIOxKBFIL_KEY14	CONFIGIOxKBFIL_3
-        #define PINxKBFIL_KEY14		PINxKBFIL_3
-        //
-        #define PORTWxKBCOL_KEY14 	PORTWxKBCOL_2
-        #define PORTRxKBCOL_KEY14	PORTRxKBCOL_2
-        #define CONFIGIOxKBCOL_KEY14	CONFIGIOxKBCOL_2
-        #define PINxKBCOL_KEY14		PINxKBCOL_2
-        //////////////////////////////////////
-        #define PORTWxKBFIL_KEY15	PORTWxKBFIL_3
-        #define PORTRxKBFIL_KEY15	PORTRxKBFIL_3
-        #define CONFIGIOxKBFIL_KEY15	CONFIGIOxKBFIL_3
-        #define PINxKBFIL_KEY15		PINxKBFIL_3
-        //
-        #define PORTWxKBCOL_KEY15	PORTWxKBCOL_3
-        #define PORTRxKBCOL_KEY15	PORTRxKBCOL_3
-        #define CONFIGIOxKBCOL_KEY15	CONFIGIOxKBCOL_3
-        #define PINxKBCOL_KEY15		PINxKBCOL_3
 
         //////////////////////////////////////
         #define KB_LYOUT_KEY_1      0
