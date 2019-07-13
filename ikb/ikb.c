@@ -1,4 +1,3 @@
-//#include "../system.h"
 #include "system.h"
 #include "ikb.h"
 
@@ -42,155 +41,159 @@
 
 #ifdef iKPAD
 
-    static inline uint8_t keyRead_pin_key1(void)
+    static inline uint8_t keyRead_pin_key0(void)
     {
-        PinTo0(PORTWxKBFIL_1, PINxKBFIL_1);
+        PinTo0(PORTWxKBFIL_0, PINxKBFIL_0);
+        PinTo1(PORTWxKBFIL_1, PINxKBFIL_1);
         PinTo1(PORTWxKBFIL_2, PINxKBFIL_2);
         PinTo1(PORTWxKBFIL_3, PINxKBFIL_3);
-        PinTo1(PORTWxKBFIL_4, PINxKBFIL_4);
+        readkey_setup_time();
+        return ReadPin(PORTRxKBCOL_KEY0, PINxKBCOL_KEY0);
+    }
+    static inline uint8_t keyRead_pin_key1(void)
+    {
+        PinTo0(PORTWxKBFIL_0, PINxKBFIL_0);
+        PinTo1(PORTWxKBFIL_1, PINxKBFIL_1);
+        PinTo1(PORTWxKBFIL_2, PINxKBFIL_2);
+        PinTo1(PORTWxKBFIL_3, PINxKBFIL_3);
         readkey_setup_time();
         return ReadPin(PORTRxKBCOL_KEY1, PINxKBCOL_KEY1);
     }
     static inline uint8_t keyRead_pin_key2(void)
     {
-        PinTo0(PORTWxKBFIL_1, PINxKBFIL_1);
+        PinTo0(PORTWxKBFIL_0, PINxKBFIL_0);
+        PinTo1(PORTWxKBFIL_1, PINxKBFIL_1);
         PinTo1(PORTWxKBFIL_2, PINxKBFIL_2);
         PinTo1(PORTWxKBFIL_3, PINxKBFIL_3);
-        PinTo1(PORTWxKBFIL_4, PINxKBFIL_4);
         readkey_setup_time();
         return ReadPin(PORTRxKBCOL_KEY2, PINxKBCOL_KEY2);
     }
     static inline uint8_t keyRead_pin_key3(void)
     {
-        PinTo0(PORTWxKBFIL_1, PINxKBFIL_1);
+        PinTo0(PORTWxKBFIL_0, PINxKBFIL_0);
+        PinTo1(PORTWxKBFIL_1, PINxKBFIL_1);
         PinTo1(PORTWxKBFIL_2, PINxKBFIL_2);
         PinTo1(PORTWxKBFIL_3, PINxKBFIL_3);
-        PinTo1(PORTWxKBFIL_4, PINxKBFIL_4);
         readkey_setup_time();
         return ReadPin(PORTRxKBCOL_KEY3, PINxKBCOL_KEY3);
     }
+    //
     static inline uint8_t keyRead_pin_key4(void)
     {
+        PinTo1(PORTWxKBFIL_0, PINxKBFIL_0);
         PinTo0(PORTWxKBFIL_1, PINxKBFIL_1);
         PinTo1(PORTWxKBFIL_2, PINxKBFIL_2);
         PinTo1(PORTWxKBFIL_3, PINxKBFIL_3);
-        PinTo1(PORTWxKBFIL_4, PINxKBFIL_4);
         readkey_setup_time();
         return ReadPin(PORTRxKBCOL_KEY4, PINxKBCOL_KEY4);
     }
-    //
-    static inline uint8_t keyRead_pin_key5(void)
+    static inline uint8_t keyRead_pin_key6(void)
     {
-        PinTo1(PORTWxKBFIL_1, PINxKBFIL_1);
-        PinTo0(PORTWxKBFIL_2, PINxKBFIL_2);
+        PinTo1(PORTWxKBFIL_0, PINxKBFIL_0);
+        PinTo0(PORTWxKBFIL_1, PINxKBFIL_1);
+        PinTo1(PORTWxKBFIL_2, PINxKBFIL_2);
         PinTo1(PORTWxKBFIL_3, PINxKBFIL_3);
-        PinTo1(PORTWxKBFIL_4, PINxKBFIL_4);
         readkey_setup_time();
         return ReadPin(PORTRxKBCOL_KEY5, PINxKBCOL_KEY5);
     }
-    static inline uint8_t keyRead_pin_key6(void)
+    static inline uint8_t keyRead_pin_key7(void)
     {
-        PinTo1(PORTWxKBFIL_1, PINxKBFIL_1);
-        PinTo0(PORTWxKBFIL_2, PINxKBFIL_2);
+        PinTo1(PORTWxKBFIL_0, PINxKBFIL_0);
+        PinTo0(PORTWxKBFIL_1, PINxKBFIL_1);
+        PinTo1(PORTWxKBFIL_2, PINxKBFIL_2);
         PinTo1(PORTWxKBFIL_3, PINxKBFIL_3);
-        PinTo1(PORTWxKBFIL_4, PINxKBFIL_4);
         readkey_setup_time();
         return ReadPin(PORTRxKBCOL_KEY6, PINxKBCOL_KEY6);
     }
-    static inline uint8_t keyRead_pin_key7(void)
-    {
-        PinTo1(PORTWxKBFIL_1, PINxKBFIL_1);
-        PinTo0(PORTWxKBFIL_2, PINxKBFIL_2);
-        PinTo1(PORTWxKBFIL_3, PINxKBFIL_3);
-        PinTo1(PORTWxKBFIL_4, PINxKBFIL_4);
-        readkey_setup_time();
-        return ReadPin(PORTRxKBCOL_KEY7, PINxKBCOL_KEY7);
-    }
     static inline uint8_t keyRead_pin_key8(void)
     {
-        PinTo1(PORTWxKBFIL_1, PINxKBFIL_1);
-        PinTo0(PORTWxKBFIL_2, PINxKBFIL_2);
+        PinTo1(PORTWxKBFIL_0, PINxKBFIL_0);
+        PinTo0(PORTWxKBFIL_1, PINxKBFIL_1);
+        PinTo1(PORTWxKBFIL_2, PINxKBFIL_2);
         PinTo1(PORTWxKBFIL_3, PINxKBFIL_3);
-        PinTo1(PORTWxKBFIL_4, PINxKBFIL_4);
         readkey_setup_time();
-        return ReadPin(PORTRxKBCOL_KEY8, PINxKBCOL_KEY8);
+        return ReadPin(PORTRxKBCOL_KEY7, PINxKBCOL_KEY7);
     }
     //
     static inline uint8_t keyRead_pin_key9(void)
     {
+        PinTo1(PORTWxKBFIL_0, PINxKBFIL_0);
         PinTo1(PORTWxKBFIL_1, PINxKBFIL_1);
-        PinTo1(PORTWxKBFIL_2, PINxKBFIL_2);
-        PinTo0(PORTWxKBFIL_3, PINxKBFIL_3);
-        PinTo1(PORTWxKBFIL_4, PINxKBFIL_4);
+        PinTo0(PORTWxKBFIL_2, PINxKBFIL_2);
+        PinTo1(PORTWxKBFIL_3, PINxKBFIL_3);
         readkey_setup_time();
-        return ReadPin(PORTRxKBCOL_KEY9, PINxKBCOL_KEY9);
+        return ReadPin(PORTRxKBCOL_KEY8, PINxKBCOL_KEY8);
     }
     static inline uint8_t keyRead_pin_key10(void)
     {
+        PinTo1(PORTWxKBFIL_0, PINxKBFIL_0);
         PinTo1(PORTWxKBFIL_1, PINxKBFIL_1);
-        PinTo1(PORTWxKBFIL_2, PINxKBFIL_2);
-        PinTo0(PORTWxKBFIL_3, PINxKBFIL_3);
-        PinTo1(PORTWxKBFIL_4, PINxKBFIL_4);
+        PinTo0(PORTWxKBFIL_2, PINxKBFIL_2);
+        PinTo1(PORTWxKBFIL_3, PINxKBFIL_3);
         readkey_setup_time();
-        return ReadPin(PORTRxKBCOL_KEY10, PINxKBCOL_KEY10);
+        return ReadPin(PORTRxKBCOL_KEY9, PINxKBCOL_KEY9);
     }
     static inline uint8_t keyRead_pin_key11(void)
     {
+        PinTo1(PORTWxKBFIL_0, PINxKBFIL_0);
         PinTo1(PORTWxKBFIL_1, PINxKBFIL_1);
-        PinTo1(PORTWxKBFIL_2, PINxKBFIL_2);
-        PinTo0(PORTWxKBFIL_3, PINxKBFIL_3);
-        PinTo1(PORTWxKBFIL_4, PINxKBFIL_4);
+        PinTo0(PORTWxKBFIL_2, PINxKBFIL_2);
+        PinTo1(PORTWxKBFIL_3, PINxKBFIL_3);
         readkey_setup_time();
-        return ReadPin(PORTRxKBCOL_KEY11, PINxKBCOL_KEY11);
+        return ReadPin(PORTRxKBCOL_KEY10, PINxKBCOL_KEY10);
     }
     static inline uint8_t keyRead_pin_key12(void)
     {
+        PinTo1(PORTWxKBFIL_0, PINxKBFIL_0);
         PinTo1(PORTWxKBFIL_1, PINxKBFIL_1);
-        PinTo1(PORTWxKBFIL_2, PINxKBFIL_2);
-        PinTo0(PORTWxKBFIL_3, PINxKBFIL_3);
-        PinTo1(PORTWxKBFIL_4, PINxKBFIL_4);
+        PinTo0(PORTWxKBFIL_2, PINxKBFIL_2);
+        PinTo1(PORTWxKBFIL_3, PINxKBFIL_3);
         readkey_setup_time();
-        return ReadPin(PORTRxKBCOL_KEY12, PINxKBCOL_KEY12);
+        return ReadPin(PORTRxKBCOL_KEY11, PINxKBCOL_KEY11);
     }
     static inline uint8_t keyRead_pin_key13(void)
     {
+        PinTo1(PORTWxKBFIL_0, PINxKBFIL_0);
         PinTo1(PORTWxKBFIL_1, PINxKBFIL_1);
         PinTo1(PORTWxKBFIL_2, PINxKBFIL_2);
-        PinTo1(PORTWxKBFIL_3, PINxKBFIL_3);
-        PinTo0(PORTWxKBFIL_4, PINxKBFIL_4);
+        PinTo0(PORTWxKBFIL_3, PINxKBFIL_3);
         readkey_setup_time();
-        return ReadPin(PORTRxKBCOL_KEY13, PINxKBCOL_KEY13);
+        return ReadPin(PORTRxKBCOL_KEY12, PINxKBCOL_KEY12);
     }
     static inline uint8_t keyRead_pin_key14(void)
     {
+        PinTo1(PORTWxKBFIL_0, PINxKBFIL_0);
         PinTo1(PORTWxKBFIL_1, PINxKBFIL_1);
         PinTo1(PORTWxKBFIL_2, PINxKBFIL_2);
-        PinTo1(PORTWxKBFIL_3, PINxKBFIL_3);
-        PinTo0(PORTWxKBFIL_4, PINxKBFIL_4);
+        PinTo0(PORTWxKBFIL_3, PINxKBFIL_3);
         readkey_setup_time();
-        return ReadPin(PORTRxKBCOL_KEY14, PINxKBCOL_KEY14);
+        return ReadPin(PORTRxKBCOL_KEY13, PINxKBCOL_KEY13);
     }
     static inline uint8_t keyRead_pin_key15(void)
     {
+        PinTo1(PORTWxKBFIL_0, PINxKBFIL_0);
         PinTo1(PORTWxKBFIL_1, PINxKBFIL_1);
         PinTo1(PORTWxKBFIL_2, PINxKBFIL_2);
-        PinTo1(PORTWxKBFIL_3, PINxKBFIL_3);
-        PinTo0(PORTWxKBFIL_4, PINxKBFIL_4);
+        PinTo0(PORTWxKBFIL_3, PINxKBFIL_3);
         readkey_setup_time();
-        return ReadPin(PORTRxKBCOL_KEY15, PINxKBCOL_KEY15);
+        return ReadPin(PORTRxKBCOL_KEY14, PINxKBCOL_KEY14);
     }
     static inline uint8_t keyRead_pin_key16(void)
     {
+        PinTo1(PORTWxKBFIL_0, PINxKBFIL_0);
         PinTo1(PORTWxKBFIL_1, PINxKBFIL_1);
         PinTo1(PORTWxKBFIL_2, PINxKBFIL_2);
-        PinTo1(PORTWxKBFIL_3, PINxKBFIL_3);
-        PinTo0(PORTWxKBFIL_4, PINxKBFIL_4);
+        PinTo0(PORTWxKBFIL_3, PINxKBFIL_3);
         readkey_setup_time();
-        return ReadPin(PORTRxKBCOL_KEY16, PINxKBCOL_KEY16);
+        return ReadPin(PORTRxKBCOL_KEY15, PINxKBCOL_KEY15);
     }
 #endif // iKB
 
 #ifdef iKEY
+    static inline uint8_t keyRead_pin_key0(void)
+    {
+        return ReadPin(PORTRxKB_KEY0, PINxKB_KEY0);
+    }
     static inline uint8_t keyRead_pin_key1(void)
     {
         return ReadPin(PORTRxKB_KEY1, PINxKB_KEY1);
@@ -207,10 +210,6 @@
     {
         return ReadPin(PORTRxKB_KEY4, PINxKB_KEY4);
     }
-    static inline uint8_t keyRead_pin_key5(void)
-    {
-        return ReadPin(PORTRxKB_KEY5, PINxKB_KEY5);
-    }
    
 #endif // iKEY
 
@@ -218,21 +217,21 @@
     {
         int8_t i;
         #ifdef iKPAD
+            ConfigOutputPin(CONFIGIOxKBFIL_0, PINxKBFIL_0);
             ConfigOutputPin(CONFIGIOxKBFIL_1, PINxKBFIL_1);
             ConfigOutputPin(CONFIGIOxKBFIL_2, PINxKBFIL_2);
             ConfigOutputPin(CONFIGIOxKBFIL_3, PINxKBFIL_3);
-            ConfigOutputPin(CONFIGIOxKBFIL_4, PINxKBFIL_4);
 
+            ConfigInputPin(CONFIGIOxKBCOL_0, PINxKBCOL_0);
             ConfigInputPin(CONFIGIOxKBCOL_1, PINxKBCOL_1);
             ConfigInputPin(CONFIGIOxKBCOL_2, PINxKBCOL_2);
             ConfigInputPin(CONFIGIOxKBCOL_3, PINxKBCOL_3);
-            ConfigInputPin(CONFIGIOxKBCOL_4, PINxKBCOL_4);
 
-            key[0].keyRead = keyRead_pin_key1;
-            key[1].keyRead = keyRead_pin_key2;
-            key[2].keyRead = keyRead_pin_key3;
-            key[3].keyRead = keyRead_pin_key4;
-            key[4].keyRead = keyRead_pin_key5;
+            key[0].keyRead = keyRead_pin_key0;
+            key[1].keyRead = keyRead_pin_key1;
+            key[2].keyRead = keyRead_pin_key2;
+            key[3].keyRead = keyRead_pin_key3;
+            key[4].keyRead = keyRead_pin_key4;
             key[5].keyRead = keyRead_pin_key6;
             key[6].keyRead = keyRead_pin_key7;
             key[7].keyRead = keyRead_pin_key8;
@@ -386,16 +385,16 @@
             */
         #endif // iKPAD
         #ifdef iKEY
+            ConfigInputPin(CONFIGIOxKB_KEY0, PINxKB_KEY0);
             ConfigInputPin(CONFIGIOxKB_KEY1, PINxKB_KEY1);
             ConfigInputPin(CONFIGIOxKB_KEY2, PINxKB_KEY2);
             ConfigInputPin(CONFIGIOxKB_KEY3, PINxKB_KEY3);
             ConfigInputPin(CONFIGIOxKB_KEY4, PINxKB_KEY4);
-            ConfigInputPin(CONFIGIOxKB_KEY5, PINxKB_KEY5);
-            key[0].keyRead = keyRead_pin_key1;
-            key[1].keyRead = keyRead_pin_key2;
-            key[2].keyRead = keyRead_pin_key3;
-            key[3].keyRead = keyRead_pin_key4;
-            key[4].keyRead = keyRead_pin_key5;
+            key[0].keyRead = keyRead_pin_key0;
+            key[1].keyRead = keyRead_pin_key1;
+            key[2].keyRead = keyRead_pin_key2;
+            key[3].keyRead = keyRead_pin_key3;
+            key[4].keyRead = keyRead_pin_key4;
             
 
             for (i=0; i<KB_NUM_KEYS; i++)
