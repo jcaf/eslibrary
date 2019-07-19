@@ -12,15 +12,15 @@ Reglas:
     #define iKEY
 
     //////////////////////////////////////////////////////////////////////////////////////
-    #define KB_PERIODIC_ACCESS		5E-3
-    #define KB_KEY_SCAN_COUNT_DEBOUNCE 4
+    #define KB_PERIODIC_ACCESS		20//msE-3
+    #define KB_KEY_SCAN_COUNT_DEBOUNCE 1
 
     //scan hardware
     #define KB_KEY_PINLEVEL_PRESSED 0
     #define KB_KEY_PINLEVEL_RELEASED 1
 
-    #define _FIRE_AT_TIME_THRESHOLD_ (1000E-3/KB_PERIODIC_ACCESS)
-    #define _FIRE_AT_TIME_THRESHOLD2_ (3000E-3/KB_PERIODIC_ACCESS)
+    #define _FIRE_AT_TIME_THRESHOLD_ (500.0/KB_PERIODIC_ACCESS)//in ms
+    #define _FIRE_AT_TIME_THRESHOLD2_ (2000.0/KB_PERIODIC_ACCESS)//in ms
     #define KB_BEFORE_THR	0
     #define KB_AFTER_THR	1
     //////////////////////////////////////////////////////////////////////////////////////
@@ -33,7 +33,7 @@ Reglas:
         PORTWxKBFIL_3 	9  10 11 12
         PORTWxKBFIL_4 	13 14 15 16
          */
-        #define readkey_setup_time() _delay_us(2)
+        #define KeyPad4x4_readkey_setupTime() _delay_us(2)
 
         #define PORTWxKBFIL_0 		PORTD
         #define PORTRxKBFIL_0 		PIND

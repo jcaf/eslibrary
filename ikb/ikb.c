@@ -1,3 +1,4 @@
+#include "main.h"
 #include "system.h"
 #include "ikb.h"
 
@@ -14,11 +15,14 @@
         {
             unsigned state:1;
 
-            unsigned OnKeyPressed:1;
-            unsigned OnKeyPressedAndKeyRelease:1;
+            unsigned OnKeyPressed:1;//when pressed
+            unsigned Reptt:1;
+            unsigned OnKeyReleased:1;//when released
+            unsigned whilePressing:1;//new 2019
             unsigned AtTimeExpired:1;
             unsigned AtTimeExpired2:1;//new mode 2017
-            unsigned Reptt:1;
+            //
+            
             unsigned ReadyToRead:1;		//soft-populate
             unsigned AtTimeExpired_BeforeOrAfter:1;//para usar a nivel de app
             unsigned OwnerOfGroup:1;
@@ -26,8 +30,8 @@
         } bf;
         struct _repp
         {
-            uint16_t to_start;
-            uint16_t after_start;//changed from 8 to 16 bits
+            uint16_t breakTime;     //break this time to enter to repetition
+            uint16_t period;        //each time access to repp after the "breakTime"
         } repp;
     };
     volatile struct _key key[KB_NUM_KEYS];
@@ -38,7 +42,6 @@
     void ikey_clear_all_flag(void);
     int8_t ikey_is_all_process_finished(void);
     
-
 #ifdef iKPAD
 
     static inline uint8_t keyRead_pin_key0(void)
@@ -47,7 +50,7 @@
         PinTo1(PORTWxKBFIL_1, PINxKBFIL_1);
         PinTo1(PORTWxKBFIL_2, PINxKBFIL_2);
         PinTo1(PORTWxKBFIL_3, PINxKBFIL_3);
-        readkey_setup_time();
+        KeyPad4x4_readkey_setupTime();
         return ReadPin(PORTRxKBCOL_KEY0, PINxKBCOL_KEY0);
     }
     static inline uint8_t keyRead_pin_key1(void)
@@ -56,7 +59,7 @@
         PinTo1(PORTWxKBFIL_1, PINxKBFIL_1);
         PinTo1(PORTWxKBFIL_2, PINxKBFIL_2);
         PinTo1(PORTWxKBFIL_3, PINxKBFIL_3);
-        readkey_setup_time();
+        KeyPad4x4_readkey_setupTime();
         return ReadPin(PORTRxKBCOL_KEY1, PINxKBCOL_KEY1);
     }
     static inline uint8_t keyRead_pin_key2(void)
@@ -65,7 +68,7 @@
         PinTo1(PORTWxKBFIL_1, PINxKBFIL_1);
         PinTo1(PORTWxKBFIL_2, PINxKBFIL_2);
         PinTo1(PORTWxKBFIL_3, PINxKBFIL_3);
-        readkey_setup_time();
+        KeyPad4x4_readkey_setupTime();
         return ReadPin(PORTRxKBCOL_KEY2, PINxKBCOL_KEY2);
     }
     static inline uint8_t keyRead_pin_key3(void)
@@ -74,7 +77,7 @@
         PinTo1(PORTWxKBFIL_1, PINxKBFIL_1);
         PinTo1(PORTWxKBFIL_2, PINxKBFIL_2);
         PinTo1(PORTWxKBFIL_3, PINxKBFIL_3);
-        readkey_setup_time();
+        KeyPad4x4_readkey_setupTime();
         return ReadPin(PORTRxKBCOL_KEY3, PINxKBCOL_KEY3);
     }
     //
@@ -84,7 +87,7 @@
         PinTo0(PORTWxKBFIL_1, PINxKBFIL_1);
         PinTo1(PORTWxKBFIL_2, PINxKBFIL_2);
         PinTo1(PORTWxKBFIL_3, PINxKBFIL_3);
-        readkey_setup_time();
+        KeyPad4x4_readkey_setupTime();
         return ReadPin(PORTRxKBCOL_KEY4, PINxKBCOL_KEY4);
     }
     static inline uint8_t keyRead_pin_key6(void)
@@ -93,7 +96,7 @@
         PinTo0(PORTWxKBFIL_1, PINxKBFIL_1);
         PinTo1(PORTWxKBFIL_2, PINxKBFIL_2);
         PinTo1(PORTWxKBFIL_3, PINxKBFIL_3);
-        readkey_setup_time();
+        KeyPad4x4_readkey_setupTime();
         return ReadPin(PORTRxKBCOL_KEY5, PINxKBCOL_KEY5);
     }
     static inline uint8_t keyRead_pin_key7(void)
@@ -102,7 +105,7 @@
         PinTo0(PORTWxKBFIL_1, PINxKBFIL_1);
         PinTo1(PORTWxKBFIL_2, PINxKBFIL_2);
         PinTo1(PORTWxKBFIL_3, PINxKBFIL_3);
-        readkey_setup_time();
+        KeyPad4x4_readkey_setupTime();
         return ReadPin(PORTRxKBCOL_KEY6, PINxKBCOL_KEY6);
     }
     static inline uint8_t keyRead_pin_key8(void)
@@ -111,7 +114,7 @@
         PinTo0(PORTWxKBFIL_1, PINxKBFIL_1);
         PinTo1(PORTWxKBFIL_2, PINxKBFIL_2);
         PinTo1(PORTWxKBFIL_3, PINxKBFIL_3);
-        readkey_setup_time();
+        KeyPad4x4_readkey_setupTime();
         return ReadPin(PORTRxKBCOL_KEY7, PINxKBCOL_KEY7);
     }
     //
@@ -121,7 +124,7 @@
         PinTo1(PORTWxKBFIL_1, PINxKBFIL_1);
         PinTo0(PORTWxKBFIL_2, PINxKBFIL_2);
         PinTo1(PORTWxKBFIL_3, PINxKBFIL_3);
-        readkey_setup_time();
+        KeyPad4x4_readkey_setupTime();
         return ReadPin(PORTRxKBCOL_KEY8, PINxKBCOL_KEY8);
     }
     static inline uint8_t keyRead_pin_key10(void)
@@ -130,7 +133,7 @@
         PinTo1(PORTWxKBFIL_1, PINxKBFIL_1);
         PinTo0(PORTWxKBFIL_2, PINxKBFIL_2);
         PinTo1(PORTWxKBFIL_3, PINxKBFIL_3);
-        readkey_setup_time();
+        KeyPad4x4_readkey_setupTime();
         return ReadPin(PORTRxKBCOL_KEY9, PINxKBCOL_KEY9);
     }
     static inline uint8_t keyRead_pin_key11(void)
@@ -139,7 +142,7 @@
         PinTo1(PORTWxKBFIL_1, PINxKBFIL_1);
         PinTo0(PORTWxKBFIL_2, PINxKBFIL_2);
         PinTo1(PORTWxKBFIL_3, PINxKBFIL_3);
-        readkey_setup_time();
+        KeyPad4x4_readkey_setupTime();
         return ReadPin(PORTRxKBCOL_KEY10, PINxKBCOL_KEY10);
     }
     static inline uint8_t keyRead_pin_key12(void)
@@ -148,7 +151,7 @@
         PinTo1(PORTWxKBFIL_1, PINxKBFIL_1);
         PinTo0(PORTWxKBFIL_2, PINxKBFIL_2);
         PinTo1(PORTWxKBFIL_3, PINxKBFIL_3);
-        readkey_setup_time();
+        KeyPad4x4_readkey_setupTime();
         return ReadPin(PORTRxKBCOL_KEY11, PINxKBCOL_KEY11);
     }
     static inline uint8_t keyRead_pin_key13(void)
@@ -157,7 +160,7 @@
         PinTo1(PORTWxKBFIL_1, PINxKBFIL_1);
         PinTo1(PORTWxKBFIL_2, PINxKBFIL_2);
         PinTo0(PORTWxKBFIL_3, PINxKBFIL_3);
-        readkey_setup_time();
+        KeyPad4x4_readkey_setupTime();
         return ReadPin(PORTRxKBCOL_KEY12, PINxKBCOL_KEY12);
     }
     static inline uint8_t keyRead_pin_key14(void)
@@ -166,7 +169,7 @@
         PinTo1(PORTWxKBFIL_1, PINxKBFIL_1);
         PinTo1(PORTWxKBFIL_2, PINxKBFIL_2);
         PinTo0(PORTWxKBFIL_3, PINxKBFIL_3);
-        readkey_setup_time();
+        KeyPad4x4_readkey_setupTime();
         return ReadPin(PORTRxKBCOL_KEY13, PINxKBCOL_KEY13);
     }
     static inline uint8_t keyRead_pin_key15(void)
@@ -175,7 +178,7 @@
         PinTo1(PORTWxKBFIL_1, PINxKBFIL_1);
         PinTo1(PORTWxKBFIL_2, PINxKBFIL_2);
         PinTo0(PORTWxKBFIL_3, PINxKBFIL_3);
-        readkey_setup_time();
+        KeyPad4x4_readkey_setupTime();
         return ReadPin(PORTRxKBCOL_KEY14, PINxKBCOL_KEY14);
     }
     static inline uint8_t keyRead_pin_key16(void)
@@ -184,7 +187,7 @@
         PinTo1(PORTWxKBFIL_1, PINxKBFIL_1);
         PinTo1(PORTWxKBFIL_2, PINxKBFIL_2);
         PinTo0(PORTWxKBFIL_3, PINxKBFIL_3);
-        readkey_setup_time();
+        KeyPad4x4_readkey_setupTime();
         return ReadPin(PORTRxKBCOL_KEY15, PINxKBCOL_KEY15);
     }
 #endif // iKB
@@ -247,12 +250,12 @@
             for (i=0; i<KB_NUM_KEYS; i++)
             {
                 key[i].bf.OnKeyPressed = 1;
-                key[i].bf.OnKeyPressedAndKeyRelease = 0;
+                key[i].bf.OnKeyReleased = 0;
                 key[i].bf.AtTimeExpired = 0;
                 key[i].bf.Reptt = 0;
                 key[i].num_group_x = 0;
-                key[i].repp.to_start= 500.0/5;
-                key[i].repp.after_start = 200.0/5;
+                key[i].repp.breakTime= 500.0/5;
+                key[i].repp.period = 200.0/5;
             }
             /*
             key[0].bf.OnKeyPressed = 1;
@@ -396,17 +399,69 @@
             key[3].keyRead = keyRead_pin_key3;
             key[4].keyRead = keyRead_pin_key4;
             
-
-            for (i=0; i<KB_NUM_KEYS; i++)
-            {
-                key[i].bf.OnKeyPressed = 1;
-                key[i].bf.OnKeyPressedAndKeyRelease = 0;
-                key[i].bf.AtTimeExpired = 0;
-                key[i].bf.Reptt = 0;
-                key[i].num_group_x = 0;
-                key[i].repp.to_start= (uint16_t)500.0/5;
-                key[i].repp.after_start = (uint16_t)200.0/5;
-            }
+            //+-
+            key[0].bf.OnKeyPressed = 1;
+            key[0].bf.OnKeyReleased = 0;
+            key[0].bf.AtTimeExpired = 0;
+            key[0].bf.AtTimeExpired2 = 0;
+            key[0].bf.whilePressing = 0;
+            key[0].num_group_x = 1;
+            //
+            key[0].bf.Reptt = 1;
+            key[0].repp.breakTime= (uint16_t)500.0/KB_PERIODIC_ACCESS;
+            key[0].repp.period = (uint16_t)300.0/KB_PERIODIC_ACCESS;
+            //-+
+            //+-
+            key[1].bf.OnKeyPressed = 1;
+            key[1].bf.OnKeyReleased = 0;
+            key[1].bf.AtTimeExpired = 0;
+            key[1].bf.AtTimeExpired2 = 0;
+            key[1].bf.whilePressing = 0;
+            key[1].num_group_x = 1;
+            //
+            key[1].bf.Reptt = 1;
+            key[1].repp.breakTime= (uint16_t)500.0/KB_PERIODIC_ACCESS;
+            key[1].repp.period = (uint16_t)300.0/KB_PERIODIC_ACCESS;
+            //-+
+            //+-
+            key[2].bf.OnKeyPressed = 0;
+            key[2].bf.OnKeyReleased = 0;
+            key[2].bf.AtTimeExpired = 0;
+            key[2].bf.AtTimeExpired2 = 1;
+            key[2].bf.whilePressing = 0;
+            key[2].num_group_x = 0;
+            //
+            key[2].bf.Reptt = 0;
+            key[2].repp.breakTime= (uint16_t)300.0/KB_PERIODIC_ACCESS;
+            key[2].repp.period = (uint16_t)800.0/KB_PERIODIC_ACCESS;
+            //-+
+            //+-
+            key[3].bf.OnKeyPressed = 0;
+            key[3].bf.OnKeyReleased = 0;
+            key[3].bf.AtTimeExpired = 0;
+            key[3].bf.AtTimeExpired2 = 1;
+            key[3].bf.whilePressing = 0;
+            key[3].num_group_x = 0;
+            //
+            key[3].bf.Reptt = 0;
+            key[3].repp.breakTime= (uint16_t)300.0/KB_PERIODIC_ACCESS;
+            key[3].repp.period = (uint16_t)800.0/KB_PERIODIC_ACCESS;
+            //-+
+            
+             //+-
+            key[4].bf.OnKeyPressed = 0;
+            key[4].bf.OnKeyReleased = 0;
+            key[4].bf.AtTimeExpired = 0;
+            key[4].bf.AtTimeExpired2 = 0;
+            key[4].bf.whilePressing = 1;
+            key[4].num_group_x = 0;
+            //
+            key[4].bf.Reptt = 0;
+            key[4].repp.breakTime= (uint16_t)300.0/KB_PERIODIC_ACCESS;
+            key[4].repp.period = (uint16_t)800.0/KB_PERIODIC_ACCESS;
+            //-+
+            
+           
         #endif // iKEY
     }
 
@@ -445,11 +500,15 @@ void ikb_execfunct(uint8_t k)
 #define KB_KEY_STATE_PRESSED 1
 #define KB_KEY_STATE_RELEASED 0
 
+#define IKEY_SCAN_SETUP_TIMEuS 5//us
+
 void ikey_scan(void)
 {
     int8_t k = KB_NUM_KEYS-1;
     do
     {
+        __delay_us(IKEY_SCAN_SETUP_TIMEuS);
+        
         if (key[k].sm0 == 0)
         {
             if (key[k].keyRead() == KB_KEY_PINLEVEL_PRESSED)
@@ -496,6 +555,7 @@ void ikey_scan(void)
                 }
             }
         }
+    
     }while (--k >= 0);
 }
 
@@ -504,11 +564,12 @@ void ikey_scan(void)
 //#define AGRUPED 1
 #define GROUP_LOCKED 1
 #define GROUP_UNLOCKED	0
+
 uint8_t group_x[KB_NUM_KEYS];
 
 static uint8_t ikey_is_accessible(uint8_t k)
 {
-    if (key[k].num_group_x != NO_GROUP_X)	//esta agrupado ?
+    if (key[k].num_group_x > NO_GROUP_X)	//esta agrupado ?
     {
         //aqui fue puesto al presionar la tecla
         if (group_x[key[k].num_group_x] == GROUP_LOCKED)
@@ -528,18 +589,23 @@ static uint8_t ikey_is_accessible(uint8_t k)
 #define KBAPP_ALREADYREAD	0
 
 //Stages definition, incremental and contiguous order
-#define _STAGE_START_PARSING_			(0)
-#define _STAGE_ISKEY_RELEASED_			(1)
-#define _STAGE_ISKEY_READFROMAPP_		(2)
-#define _STAGE_FIREATIMEEXPIRED_		(3)
-#define _STAGE_FIREATIMEEXPIRED_2_		(4)
-#define _STAGE_PRESSEDANDKEYRELEASE_	(5)
-//Reptt deben ser contiguos!
-#define _STAGE_REPTT_					(6)
-#define _STAGE_REPTT_1_					(7)
-#define _STAGE_REPTT_2_					(8)
-//
-#define _STAGE_END_PARSING_				(9)
+enum _STAGE_
+{
+    _STAGE_START_PARSING_=0,
+    _STAGE_ISKEY_RELEASED_,
+    _STAGE_ISKEY_RELEASED2_,
+    _STAGE_ISKEY_READFROMAPP_,
+    _STAGE_FIREATIMEEXPIRED_,
+    _STAGE_FIREATIMEEXPIRED_2_,
+    _STAGE_ONKEYRELEASED_,
+    _STAGE_WHILEPRESSING_,
+    //Reptt, _1, _2 deben ser contiguos!
+    _STAGE_REPTT_,
+    _STAGE_REPTT_1_,
+    _STAGE_REPTT_2_,
+    //
+    _STAGE_END_PARSING_,
+};
 
 void ikey_parsing(void)
 {
@@ -567,11 +633,14 @@ void ikey_parsing(void)
                             key[k].sm1 = _STAGE_ISKEY_RELEASED_;
                         }
                     }
-                    else if ( key[k].bf.OnKeyPressedAndKeyRelease)
+                    else if ( key[k].bf.OnKeyReleased)
                     {
-                        key[k].sm1 = _STAGE_PRESSEDANDKEYRELEASE_;
+                        key[k].sm1 = _STAGE_ONKEYRELEASED_;
                     }
-
+                    else if ( key[k].bf.whilePressing)
+                    {
+                        key[k].sm1 = _STAGE_WHILEPRESSING_;
+                    }
                     else if (key[k].bf.AtTimeExpired)
                     {
                         key[k].sm1 = _STAGE_FIREATIMEEXPIRED_;
@@ -587,7 +656,7 @@ void ikey_parsing(void)
 
                     //........................................................
 
-                    if (key[k].num_group_x != NO_GROUP_X)
+                    if (key[k].num_group_x > NO_GROUP_X)
                     {
                         group_x[ key[k].num_group_x ] = GROUP_LOCKED;
                         key[k].bf.OwnerOfGroup = 1;
@@ -610,7 +679,7 @@ void ikey_parsing(void)
         //.............................................................................
         if (key[k].sm1 == _STAGE_REPTT_ )
         {
-            if ( ++key[k].counter1 >= key[k].repp.to_start)
+            if ( ++key[k].counter1 >= key[k].repp.breakTime)
             {
                 key[k].counter1 =0;
                 key[k].sm1 = _STAGE_REPTT_1_;
@@ -626,20 +695,25 @@ void ikey_parsing(void)
         }
         if (key[k].sm1 == _STAGE_REPTT_2_)	//ping-pong 2<->1
         {
-            if ( ++key[k].counter1 >= key[k].repp.after_start)
+            if ( ++key[k].counter1 >= key[k].repp.period)
             {
                 key[k].counter1 = 0;
                 key[k].sm1 = _STAGE_REPTT_1_;
             }
         }
         //_________________________________________________________________________________________
-        if (key[k].sm1 == _STAGE_PRESSEDANDKEYRELEASE_ )
+        if (key[k].sm1 == _STAGE_ONKEYRELEASED_ )
         {
             if (key[k].bf.state == KB_KEY_STATE_RELEASED)	//ya solto?
             {
                 key[k].bf.ReadyToRead = KBAPP_READY2READ;							//Populate Key to app.
                 key[k].sm1 = _STAGE_ISKEY_READFROMAPP_;		//esperar x leer
             }
+        }
+        if (key[k].sm1 == _STAGE_WHILEPRESSING_ )   //added 2019
+        {
+            key[k].bf.ReadyToRead = KBAPP_READY2READ;	//Populate Key to app.
+            key[k].sm1 = _STAGE_ISKEY_RELEASED2_;
         }
         //_________________________________________________________________________________________
         if (key[k].sm1 == _STAGE_FIREATIMEEXPIRED_ )
@@ -697,7 +771,7 @@ void ikey_parsing(void)
                 }
             }
 
-            #define _FIRE_AT_TIME_THRESHOLD2_ 3000E-3/KB_PERIODIC_ACCESS
+            //#define _FIRE_AT_TIME_THRESHOLD2_ (3000E-3/KB_PERIODIC_ACCESS)
             if (key[k].counter1 >= (_FIRE_AT_TIME_THRESHOLD2_))
             {
                 key[k].counter1 = 0x0000;
@@ -706,7 +780,7 @@ void ikey_parsing(void)
                 key[k].bf.AtTimeExpired_BeforeOrAfter = KB_AFTER_THR; //queda senializado
 
                 //NO SE ADMITE REPETICION
-                key[k].sm1 = _STAGE_ISKEY_RELEASED_; //wait for key is release
+                key[k].sm1 = _STAGE_ISKEY_RELEASED2_; //wait for key is release
             }
         }
         //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -716,6 +790,15 @@ void ikey_parsing(void)
             if (key[k].bf.state == KB_KEY_STATE_RELEASED)						//ya solto?
             {
                 key[k].sm1 = _STAGE_ISKEY_READFROMAPP_;   //esperar x leer
+            }
+        }
+        //_________________________________________________________________________________________
+        if (key[k].sm1 == _STAGE_ISKEY_RELEASED2_)		//added 2019
+        {
+            if (key[k].bf.state == KB_KEY_STATE_RELEASED)					
+            {
+                key[k].bf.ReadyToRead = KBAPP_ALREADYREAD;
+                key[k].sm1 = _STAGE_END_PARSING_;
             }
         }
         //_________________________________________________________________________________________
@@ -741,7 +824,6 @@ void ikey_parsing(void)
             key[k].bf.InProcessing = 0;
             //++
         }
-
     }
 }
 int8_t ikey_is_all_hw_released(void)//hardware release
