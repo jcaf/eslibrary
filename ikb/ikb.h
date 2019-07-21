@@ -8,6 +8,43 @@ Reglas:
 
     #define KB_NUM_KEYS 5  //Total Number of keys
 
+    struct _key
+    {
+        PTRFX_retUINT8_T keyRead;
+        PTRFX_retVOID keyDo;
+        uint8_t sm0;        //maquina de estados
+        uint8_t counter0;//contador
+        uint8_t sm1;
+        uint16_t counter1;
+        uint8_t  num_group_x;
+        struct _bf
+        {
+            unsigned state:1;
+
+            unsigned OnKeyPressed:1;//when pressed
+            unsigned Reptt:1;
+            unsigned OnKeyReleased:1;//when released
+            unsigned whilePressing:1;//new 2019
+            unsigned AtTimeExpired:1;
+            unsigned AtTimeExpired2:1;//new mode 2017
+            //
+            
+            unsigned ReadyToRead:1;		//soft-populate
+            unsigned AtTimeExpired_BeforeOrAfter:1;//para usar a nivel de app
+            unsigned OwnerOfGroup:1;
+            unsigned InProcessing:1;
+        } bf;
+        struct _repp
+        {
+            uint16_t breakTime;     //break this time to enter to repetition
+            uint16_t period;        //each time access to repp after the "breakTime"
+        } repp;
+    };
+    
+extern volatile struct _key key[KB_NUM_KEYS];//por ahora... hay q exponer las propiedades con setters/gettters
+
+    
+
     //#define iKPAD
     #define iKEY
 

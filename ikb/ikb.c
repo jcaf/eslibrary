@@ -2,38 +2,39 @@
 #include "system.h"
 #include "ikb.h"
 
-    struct _key
-    {
-        PTRFX_retUINT8_T keyRead;
-        PTRFX_retVOID keyDo;
-        uint8_t sm0;        //maquina de estados
-        uint8_t counter0;//contador
-        uint8_t sm1;
-        uint16_t counter1;
-        uint8_t  num_group_x;
-        struct _bf
-        {
-            unsigned state:1;
-
-            unsigned OnKeyPressed:1;//when pressed
-            unsigned Reptt:1;
-            unsigned OnKeyReleased:1;//when released
-            unsigned whilePressing:1;//new 2019
-            unsigned AtTimeExpired:1;
-            unsigned AtTimeExpired2:1;//new mode 2017
-            //
-            
-            unsigned ReadyToRead:1;		//soft-populate
-            unsigned AtTimeExpired_BeforeOrAfter:1;//para usar a nivel de app
-            unsigned OwnerOfGroup:1;
-            unsigned InProcessing:1;
-        } bf;
-        struct _repp
-        {
-            uint16_t breakTime;     //break this time to enter to repetition
-            uint16_t period;        //each time access to repp after the "breakTime"
-        } repp;
-    };
+//    struct _key
+//    {
+//        PTRFX_retUINT8_T keyRead;
+//        PTRFX_retVOID keyDo;
+//        uint8_t sm0;        //maquina de estados
+//        uint8_t counter0;//contador
+//        uint8_t sm1;
+//        uint16_t counter1;
+//        uint8_t  num_group_x;
+//        struct _bf
+//        {
+//            unsigned state:1;
+//
+//            unsigned OnKeyPressed:1;//when pressed
+//            unsigned Reptt:1;
+//            unsigned OnKeyReleased:1;//when released
+//            unsigned whilePressing:1;//new 2019
+//            unsigned AtTimeExpired:1;
+//            unsigned AtTimeExpired2:1;//new mode 2017
+//            //
+//            
+//            unsigned ReadyToRead:1;		//soft-populate
+//            unsigned AtTimeExpired_BeforeOrAfter:1;//para usar a nivel de app
+//            unsigned OwnerOfGroup:1;
+//            unsigned InProcessing:1;
+//        } bf;
+//        struct _repp
+//        {
+//            uint16_t breakTime;     //break this time to enter to repetition
+//            uint16_t period;        //each time access to repp after the "breakTime"
+//        } repp;
+//    };
+//    
     volatile struct _key key[KB_NUM_KEYS];
     
     void ikey_scan(void);
@@ -406,7 +407,6 @@
             key[0].bf.AtTimeExpired2 = 0;
             key[0].bf.whilePressing = 0;
             key[0].num_group_x = 1;
-            //
             key[0].bf.Reptt = 1;
             key[0].repp.breakTime= (uint16_t)500.0/KB_PERIODIC_ACCESS;
             key[0].repp.period = (uint16_t)300.0/KB_PERIODIC_ACCESS;
@@ -418,7 +418,6 @@
             key[1].bf.AtTimeExpired2 = 0;
             key[1].bf.whilePressing = 0;
             key[1].num_group_x = 1;
-            //
             key[1].bf.Reptt = 1;
             key[1].repp.breakTime= (uint16_t)500.0/KB_PERIODIC_ACCESS;
             key[1].repp.period = (uint16_t)300.0/KB_PERIODIC_ACCESS;
@@ -430,7 +429,6 @@
             key[2].bf.AtTimeExpired2 = 1;
             key[2].bf.whilePressing = 0;
             key[2].num_group_x = 0;
-            //
             key[2].bf.Reptt = 0;
             key[2].repp.breakTime= (uint16_t)300.0/KB_PERIODIC_ACCESS;
             key[2].repp.period = (uint16_t)800.0/KB_PERIODIC_ACCESS;
@@ -442,7 +440,6 @@
             key[3].bf.AtTimeExpired2 = 1;
             key[3].bf.whilePressing = 0;
             key[3].num_group_x = 0;
-            //
             key[3].bf.Reptt = 0;
             key[3].repp.breakTime= (uint16_t)300.0/KB_PERIODIC_ACCESS;
             key[3].repp.period = (uint16_t)800.0/KB_PERIODIC_ACCESS;
@@ -455,7 +452,6 @@
             key[4].bf.AtTimeExpired2 = 0;
             key[4].bf.whilePressing = 1;
             key[4].num_group_x = 0;
-            //
             key[4].bf.Reptt = 0;
             key[4].repp.breakTime= (uint16_t)300.0/KB_PERIODIC_ACCESS;
             key[4].repp.period = (uint16_t)800.0/KB_PERIODIC_ACCESS;
