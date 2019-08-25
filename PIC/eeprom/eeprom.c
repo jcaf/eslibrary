@@ -11,7 +11,10 @@ uint8_t eepromRead(uint8_t addr)
     EECON1bits.EEPGD = 0;
     EECON1bits.CFGS = 0;
     EECON1bits.RD = 1;
-    while (EECON1bits.RD);
+    while (EECON1bits.RD){;}
+    NOP();
+    NOP();
+    NOP();
     return EEDATA;
 }
 void eepromWrite(uint8_t addr, uint8_t data)//256 bytes...
@@ -37,9 +40,9 @@ void eepromWrite(uint8_t addr, uint8_t data)//256 bytes...
     NOP();
     NOP();
     NOP();
-            
-    EECON1bits.WREN = 0;
     GIE = GIE_temp;
+    EECON1bits.WREN = 0;
+    
     
     //if(EECON1bits.WRERR){
      //   printf("ERROR: writing to EEPROM failed!n")
