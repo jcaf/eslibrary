@@ -4,6 +4,9 @@
 //uint8_t eepromRefresh();
 uint8_t eepromRead(uint8_t addr)
 {
+    while (EECON1bits.WR)
+        {;}
+    
     EEADR = addr;
     EECON1bits.EEPGD = 0;
     EECON1bits.CFGS = 0;
@@ -14,6 +17,8 @@ uint8_t eepromRead(uint8_t addr)
 void eepromWrite(uint8_t addr, uint8_t data)//256 bytes...
 {
     uint8_t GIE_temp;
+    
+    while (EECON1bits.WR){;}
     
     EEADR = addr;
     EEDATA = data;
@@ -29,8 +34,17 @@ void eepromWrite(uint8_t addr, uint8_t data)//256 bytes...
     EECON1bits.WR = 1;
     while (EECON1bits.WR){;}
     //
-    GIE = GIE_temp;
+    NOP();
+    NOP();
+    NOP();
+            
     EECON1bits.WREN = 0;
+    GIE = GIE_temp;
+    
+    //if(EECON1bits.WRERR){
+     //   printf("ERROR: writing to EEPROM failed!n")
+    //while(PIR2bits.EEIF==0);/* Wait for write operation complete */
+    //PIR2bits.EEIF=0;	/* Reset EEIF for further write operation */
 }
 
 #define DOUBLE_SIZE sizeof(double)

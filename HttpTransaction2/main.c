@@ -15,12 +15,19 @@
 #include <stdlib.h>
 #include <string.h>
 
+typedef struct _HTTPTRX
+{
+    char *URI;
+    char *Host;
+    char *HdrLine;
+}HTTPTRX;
+
 typedef struct _JSON
 {
-	char *name;
-	char *txtval;
+    char *name;
+    char *txtval;
 }JSON;
-
+    
 //void json_cIntegerArr
 void json_cFloatArr(float *v, int size, char *outbuff)
 {
@@ -32,7 +39,7 @@ void json_cFloatArr(float *v, int size, char *outbuff)
     for (i=0; i< size; i++)
     {
         //sprintf(buff, "%.2f", v[i]);
-        snprintf(buff,10, "%.2f", v[i]);
+        snprintf(buff, sizeof(buff), "%.2f", v[i]);
         
         strcat(outbuff, buff);//alternatevly use strlcat
         
@@ -68,6 +75,11 @@ void setup(void)
     {
         printf("\"%s\":%s\n", json[i].name, json[i].txtval);
     }
+    
+    JSON *pjson;
+    pjson = json;
+    
+    printf("%i \n", strlen(pjson[1].name));
 }
 void loop(void)
 {
@@ -76,8 +88,5 @@ void loop(void)
 int main(int argc, char** argv) 
 {
     setup();
-    
-
     return (EXIT_SUCCESS);
 }
-

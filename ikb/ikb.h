@@ -2,61 +2,23 @@
 Reglas:
 -primero se lee el teclado. el indice empiezo con ellos
 */
-#ifndef KB_H_
-#define KB_H_
-    #include "types.h"
-
-    #define KB_NUM_KEYS 5  //Total Number of keys
-
-    struct _key
-    {
-        PTRFX_retUINT8_T keyRead;
-        PTRFX_retVOID keyDo;
-        uint8_t sm0;        //maquina de estados
-        uint8_t counter0;//contador
-        uint8_t sm1;
-        uint16_t counter1;
-        uint8_t  num_group_x;
-        struct _bf
-        {
-            unsigned state:1;
-
-            unsigned OnKeyPressed:1;//when pressed
-            unsigned Reptt:1;
-            unsigned OnKeyReleased:1;//when released
-            unsigned whilePressing:1;//new 2019
-            unsigned AtTimeExpired:1;
-            unsigned AtTimeExpired2:1;//new mode 2017
-            //
-            
-            unsigned ReadyToRead:1;		//soft-populate
-            unsigned AtTimeExpired_BeforeOrAfter:1;//para usar a nivel de app
-            unsigned OwnerOfGroup:1;
-            unsigned InProcessing:1;
-        } bf;
-        struct _repp
-        {
-            uint16_t breakTime;     //break this time to enter to repetition
-            uint16_t period;        //each time access to repp after the "breakTime"
-        } repp;
-    };
+#ifndef iKB_H_
+#define iKB_H_
+    //#include "types.h"
     
-extern volatile struct _key key[KB_NUM_KEYS];//por ahora... hay q exponer las propiedades con setters/gettters
-
-    
-
     //#define iKPAD
     #define iKEY
+    
+    #define KB_NUM_KEYS 5  //Total Number of keys
 
-    //////////////////////////////////////////////////////////////////////////////////////
-    #define KB_PERIODIC_ACCESS		20//msE-3
+    #define KB_PERIODIC_ACCESS 20//msE-3
     #define KB_KEY_SCAN_COUNT_DEBOUNCE 1
 
     //scan hardware
     #define KB_KEY_PINLEVEL_PRESSED 0
     #define KB_KEY_PINLEVEL_RELEASED 1
-
-    #define _FIRE_AT_TIME_THRESHOLD_ (500.0/KB_PERIODIC_ACCESS)//in ms
+    //
+    #define _FIRE_AT_TIME_THRESHOLD_ (1000.0/KB_PERIODIC_ACCESS)//in ms
     #define _FIRE_AT_TIME_THRESHOLD2_ (2000.0/KB_PERIODIC_ACCESS)//in ms
     #define KB_BEFORE_THR	0
     #define KB_AFTER_THR	1
@@ -178,7 +140,32 @@ extern volatile struct _key key[KB_NUM_KEYS];//por ahora... hay q exponer las pr
     //void kb_change_keyDo(PTRFX_retVOID *keyDo);
     //void kb_change_keyDo_pgm(PTRFX_retVOID const *  keyDo);
     //////////////////////////////////////////////////////////////////////////////////////
+    struct _key_prop
+    {
+        union _key_prop_uFlag
+        {
+            struct _key_prop_uFlag_f
+            {
+                unsigned onKeyPressed:1;//when pressed
+                unsigned reptt:1;
+                unsigned onKeyReleased:1;//when released
+                unsigned whilePressing:1;//new 2019
+                unsigned atTimeExpired:1;
+                unsigned atTimeExpired2:1;//new mode 2017
+                unsigned __a:2;
+            }f;
+            
+            uint8_t packed;
+        }uFlag;
+        
+        struct _repttTh
+        {
+            uint16_t breakTime;     //break this time to enter to repetition
+            uint16_t period;        //each time access to repp after the "breakTime"
+        }repttTh;
 
-
-
+        uint8_t  numGroup;
+    };
+    void ikb_setKeyProp(uint8_t i, struct _key_prop prop);
+    extern const struct _key_prop propEmpty;
 #endif

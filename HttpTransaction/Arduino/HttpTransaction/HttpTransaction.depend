@@ -1,0 +1,26 @@
+# depslib dependency file v1.0
+1535751922 source:/run/media/jcaf/pleasure/PROYECTOS/FIRWAR/eslibrary/HttpTransaction/Arduino/HttpTransaction/main.cpp
+	<iostream>
+
+1535506625 source:/run/media/jcaf/pleasure/PROYECTOS/FIRWAR/eslibrary/HttpTransaction/Arduino/HttpTransaction/src/iot/ntsetting.c
+	<stdint.h>
+
+1535592984 source:/run/media/jcaf/pleasure/PROYECTOS/FIRWAR/eslibrary/HttpTransaction/Arduino/HttpTransaction/src/iot/tcp_client.c
+	"tcp_client.h"
+	<stdio.h>
+
+1535592997 /run/media/jcaf/pleasure/PROYECTOS/FIRWAR/eslibrary/HttpTransaction/Arduino/HttpTransaction/src/iot/tcp_client.h
+	<stdint.h>
+
+1535593042 source:/run/media/jcaf/pleasure/PROYECTOS/FIRWAR/eslibrary/HttpTransaction/Arduino/HttpTransaction/src/tcp_client_connect.cpp
+	<Arduino.h>
+	<Ethernet.h>
+	<stdio.h>
+	<stdint.h>
+	"tcp_client_connect.h"
+
+1535506625 /run/media/jcaf/pleasure/PROYECTOS/FIRWAR/eslibrary/HttpTransaction/Arduino/HttpTransaction/src/tcp_client_connect.h
+	"iot/tcp_client.h"
+	<Arduino.h>
+	<Ethernet.h>
+
