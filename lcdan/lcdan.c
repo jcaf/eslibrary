@@ -1,3 +1,7 @@
+/*
+100% Compatible with Proteus
+Author: JCaf
+*/
 #include <avr/io.h>
 #include <stdint.h>
 #include "../system.h"
@@ -19,41 +23,41 @@
 
 #elif LCDAN_MODE==LCDAN_BIT
 
-#define PORTWxLCDAN_RS PORTC
-#define PORTRxLCDAN_RS PINC
-#define CONFIGIOxLCDAN_RS DDRC
+#define PORTWxLCDAN_RS PORTD
+#define PORTRxLCDAN_RS PIND
+#define CONFIGIOxLCDAN_RS DDRD
 #define PINxLCDAN_RS 0
 
 //RW->tied to ground
-//#define PORTWxLCDAN_RW PORTB
-//#define PORTRxLCDAN_RW PINB
-//#define CONFIGIOxLCDAN_RW DDRB
-//#define PINxLCDAN_RW 1
+#define PORTWxLCDAN_RW PORTD
+#define PORTRxLCDAN_RW PIND
+#define CONFIGIOxLCDAN_RW DDRD
+#define PINxLCDAN_RW 1
 
-#define PORTWxLCDAN_E PORTC
-#define PORTRxLCDAN_E PINC
-#define CONFIGIOxLCDAN_E DDRC
-#define PINxLCDAN_E 1
+#define PORTWxLCDAN_E PORTD
+#define PORTRxLCDAN_E PIND
+#define CONFIGIOxLCDAN_E DDRD
+#define PINxLCDAN_E 2
 
-#define PORTWxLCDAN_D4 PORTD
-#define PORTRxLCDAN_D4 PIND
-#define CONFIGIOxLCDAN_D4 DDRD
-#define PINxLCDAN_D4 5
+#define PORTWxLCDAN_D4 PORTA
+#define PORTRxLCDAN_D4 PINA
+#define CONFIGIOxLCDAN_D4 DDRA
+#define PINxLCDAN_D4 7
 
-#define PORTWxLCDAN_D5 PORTD
-#define PORTRxLCDAN_D5 PIND
-#define CONFIGIOxLCDAN_D5 DDRD
-#define PINxLCDAN_D5 4
+#define PORTWxLCDAN_D5 PORTA
+#define PORTRxLCDAN_D5 PINA
+#define CONFIGIOxLCDAN_D5 DDRA
+#define PINxLCDAN_D5 6
 
-#define PORTWxLCDAN_D6 PORTD
-#define PORTRxLCDAN_D6 PIND
-#define CONFIGIOxLCDAN_D6 DDRD
-#define PINxLCDAN_D6 3
+#define PORTWxLCDAN_D6 PORTA
+#define PORTRxLCDAN_D6 PINA
+#define CONFIGIOxLCDAN_D6 DDRA
+#define PINxLCDAN_D6 5
 
-#define PORTWxLCDAN_D7 PORTD
-#define PORTRxLCDAN_D7 PIND
-#define CONFIGIOxLCDAN_D7 DDRD
-#define PINxLCDAN_D7 2
+#define PORTWxLCDAN_D7 PORTA
+#define PORTRxLCDAN_D7 PINA
+#define CONFIGIOxLCDAN_D7 DDRA
+#define PINxLCDAN_D7 4
 
 #endif // LCDAN_MODE
 
@@ -156,35 +160,36 @@ void lcdan_set_read_mode(void)
 //------------------------------------------------------------------------------
 //AC Characteristics (VCC = 2.7 to 4.5 V, T a = ?30 to +75°C* 3 ) - peor caso
 //write operation
+#define LCD_DELAY_INTERNAL_OP 1//1us
 
-#define lcdan_delay_writeop_tAS() do{__delay_us(1);}while(0)//min 60ns
+#define lcdan_delay_writeop_tAS() do{__delay_us(LCD_DELAY_INTERNAL_OP);}while(0)//min 60ns
 //#define lcdan_delay_writeop_tEr() do{__delay_us(1);}while(0)//min 25ns
 //#define lcdan_delay_writeop_PWEH() do{__delay_us(1);}while(0)//min 450ns
-#define lcdan_delay_writeop_tER_PWEH() do{__delay_us(1);}while(0)//
+#define lcdan_delay_writeop_tER_PWEH() do{__delay_us(LCD_DELAY_INTERNAL_OP);}while(0)//
 
 //#define lcdan_delay_writeop_tEf() do{__delay_us(1);}while(0)//min 25ns
 //#define lcdan_delay_writeop_tAH() do{__delay_us(1);}while(0)//min 20ns
-#define lcdan_delay_writeop_tEf_tAH() do{__delay_us(1);}while(0)//
+#define lcdan_delay_writeop_tEf_tAH() do{__delay_us(LCD_DELAY_INTERNAL_OP);}while(0)//
 
 //#define lcdan_delay_writeop_tDSW() do{__delay_us(1);}while(0)//min 195ns
 //#define lcdan_delay_writeop_tH() do{__delay_us(1);}while(0)//min 10ns
 
 //read operation
-#define lcdan_delay_readop_tAS() do{__delay_us(1);}while(0)//min 60ns
+#define lcdan_delay_readop_tAS() do{__delay_us(LCD_DELAY_INTERNAL_OP);}while(0)//min 60ns
 
 //#define lcdan_delay_readop_tEr() do{__delay_us(1);}while(0)//min 25ns
 //#define lcdan_delay_readop_tDDR() do{__delay_us(1);}while(0)//max 360ns
-#define lcdan_delay_readop_tEr_tDDR() do{__delay_us(1);}while(0)//min 25ns+360ns
+#define lcdan_delay_readop_tEr_tDDR() do{__delay_us(LCD_DELAY_INTERNAL_OP);}while(0)//min 25ns+360ns
 
 //#define lcdan_delay_readop_PWEH() do{__delay_us(1);}while(0)//min 450ns
-#define lcdan_delay_readop_PWEH_minus_tEr_tDDR() do{__delay_us(1);}while(0)//450ns-(25ns+360ns)
+#define lcdan_delay_readop_PWEH_minus_tEr_tDDR() do{__delay_us(LCD_DELAY_INTERNAL_OP);}while(0)//450ns-(25ns+360ns)
 
 //#define lcdan_delay_readop_tEf() do{__delay_us(1);}while(0)//min 25ns
 
 //#define tcycE() do{__delay_us(1);}while(0)//min 1000ns
-#define lcdan_delay_readop_tcycE_minus_PWEH() do{__delay_us(1);}while(0)//min 1000ns - PWEH
+#define lcdan_delay_readop_tcycE_minus_PWEH() do{__delay_us(LCD_DELAY_INTERNAL_OP);}while(0)//min 1000ns - PWEH
 
-#define lcdan_delay_init() do{__delay_ms(10);__delay_ms(10);__delay_ms(10);__delay_ms(10);}while(0)
+#define lcdan_delay_init() do{__delay_ms(10);__delay_ms(10);__delay_ms(10);__delay_ms(10);__delay_ms(10);}while(0)
 //------------------------------------------------------------------------------
 
 void lcdan_strobe_enable(void)
@@ -300,8 +305,8 @@ uint8_t lcdan_test_busy(void)
     lcdan_set_datapins_outputs();
     return busy_addr;
 #else
-    _delay_us(400);
-    //__delay_ms(1.5);//garantiza +lcds
+    //_delay_us(400);
+    __delay_ms(1);//garantiza +lcds
     return 0;
 #endif
 
@@ -329,28 +334,21 @@ void lcdan_init(void)
     lcdan_delay_init(); //40ms
     lcdan_set_command_mode();
     lcdan_set_write_mode();
+
     lcdan_set_and_latch_4bits(0x30); //1 function set
-    __delay_ms(6); //>4.1ms
+    __delay_ms(5); //>4.1ms
     lcdan_set_and_latch_4bits(0x30); //2 function set
     __delay_us(150); //>100us
     lcdan_set_and_latch_4bits(0x30); //3 function set
-    __delay_us(150);                   //isis compatibility
+    __delay_us(150);
+
     lcdan_set_and_latch_4bits(0x20); //DataLength = 4bits
-    lcdan_strobe_enable();
-    //From now on as 8 Bits.
-    lcdan_write_cmd(0x28); //4 bits, 2 lines, font 5x8
-    __delay_us(50);
-    lcdan_write_cmd(LCDAN_DISP_OFF); //Display OFF
-    __delay_us(50);
-    lcdan_write_cmd(LCDAN_DISP_CLEAR); //Clear Display/According to the data sheet most instructions take 3 cycles except "Clear display" which takes 165. Suggest
-    __delay_ms(2);
-    lcdan_write_cmd(0x06); //Entry Mode Incremental, no shift
-    __delay_us(50);
-    // lcdan_write_cmd(0b00000010);        //Cursor home
-    // __delay_ms(2);
-    //end LCD initialization
+    //__delay_us(150);
+
+    //From now as 8 Bits.
+    lcdan_write_cmd(0x28);              //4 bits, 2 lines, font 5x8
+    lcdan_write_cmd(LCDAN_DISP_OFF);    //Display OFF
+    lcdan_write_cmd(LCDAN_DISP_CLEAR);  //Clear Display/According to the data sheet most instructions take 3 cycles except "Clear display" which takes 165. Suggest
+    lcdan_write_cmd(0x06);              //Entry Mode Incremental, no shift
     lcdan_write_cmd(LCDAN_DISP_ON_CURSOR_OFF_BLINK_OFF); //On display Display Control
-    __delay_us(50);
-
 }
-

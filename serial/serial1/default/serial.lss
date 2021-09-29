@@ -1,0 +1,715 @@
+
+serial.elf:     file format elf32-avr
+
+Sections:
+Idx Name          Size      VMA       LMA       File off  Algn
+  0 .text         00000378  00000000  00000000  00000074  2**1
+                  CONTENTS, ALLOC, LOAD, READONLY, CODE
+  1 .bss          00000010  00800060  00800060  000003ec  2**0
+                  ALLOC
+  2 .debug_aranges 00000060  00000000  00000000  000003ec  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  3 .debug_pubnames 0000012e  00000000  00000000  0000044c  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  4 .debug_info   0000051c  00000000  00000000  0000057a  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  5 .debug_abbrev 00000333  00000000  00000000  00000a96  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  6 .debug_line   000004fc  00000000  00000000  00000dc9  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  7 .debug_frame  000000f0  00000000  00000000  000012c8  2**2
+                  CONTENTS, READONLY, DEBUGGING
+  8 .debug_str    00000226  00000000  00000000  000013b8  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  9 .debug_loc    00000242  00000000  00000000  000015de  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 10 .debug_ranges 00000048  00000000  00000000  00001820  2**0
+                  CONTENTS, READONLY, DEBUGGING
+
+Disassembly of section .text:
+
+00000000 <__vectors>:
+   0:	0c 94 2a 00 	jmp	0x54	; 0x54 <__ctors_end>
+   4:	0c 94 3c 00 	jmp	0x78	; 0x78 <__bad_interrupt>
+   8:	0c 94 3c 00 	jmp	0x78	; 0x78 <__bad_interrupt>
+   c:	0c 94 3c 00 	jmp	0x78	; 0x78 <__bad_interrupt>
+  10:	0c 94 3c 00 	jmp	0x78	; 0x78 <__bad_interrupt>
+  14:	0c 94 3c 00 	jmp	0x78	; 0x78 <__bad_interrupt>
+  18:	0c 94 3c 00 	jmp	0x78	; 0x78 <__bad_interrupt>
+  1c:	0c 94 3c 00 	jmp	0x78	; 0x78 <__bad_interrupt>
+  20:	0c 94 3c 00 	jmp	0x78	; 0x78 <__bad_interrupt>
+  24:	0c 94 3c 00 	jmp	0x78	; 0x78 <__bad_interrupt>
+  28:	0c 94 3c 00 	jmp	0x78	; 0x78 <__bad_interrupt>
+  2c:	0c 94 3c 00 	jmp	0x78	; 0x78 <__bad_interrupt>
+  30:	0c 94 3c 00 	jmp	0x78	; 0x78 <__bad_interrupt>
+  34:	0c 94 96 00 	jmp	0x12c	; 0x12c <__vector_13>
+  38:	0c 94 3c 00 	jmp	0x78	; 0x78 <__bad_interrupt>
+  3c:	0c 94 3c 00 	jmp	0x78	; 0x78 <__bad_interrupt>
+  40:	0c 94 3c 00 	jmp	0x78	; 0x78 <__bad_interrupt>
+  44:	0c 94 3c 00 	jmp	0x78	; 0x78 <__bad_interrupt>
+  48:	0c 94 3c 00 	jmp	0x78	; 0x78 <__bad_interrupt>
+  4c:	0c 94 3c 00 	jmp	0x78	; 0x78 <__bad_interrupt>
+  50:	0c 94 3c 00 	jmp	0x78	; 0x78 <__bad_interrupt>
+
+00000054 <__ctors_end>:
+  54:	11 24       	eor	r1, r1
+  56:	1f be       	out	0x3f, r1	; 63
+  58:	cf e5       	ldi	r28, 0x5F	; 95
+  5a:	d8 e0       	ldi	r29, 0x08	; 8
+  5c:	de bf       	out	0x3e, r29	; 62
+  5e:	cd bf       	out	0x3d, r28	; 61
+
+00000060 <__do_clear_bss>:
+  60:	10 e0       	ldi	r17, 0x00	; 0
+  62:	a0 e6       	ldi	r26, 0x60	; 96
+  64:	b0 e0       	ldi	r27, 0x00	; 0
+  66:	01 c0       	rjmp	.+2      	; 0x6a <.do_clear_bss_start>
+
+00000068 <.do_clear_bss_loop>:
+  68:	1d 92       	st	X+, r1
+
+0000006a <.do_clear_bss_start>:
+  6a:	a0 37       	cpi	r26, 0x70	; 112
+  6c:	b1 07       	cpc	r27, r17
+  6e:	e1 f7       	brne	.-8      	; 0x68 <.do_clear_bss_loop>
+  70:	0e 94 3e 00 	call	0x7c	; 0x7c <main>
+  74:	0c 94 ba 01 	jmp	0x374	; 0x374 <_exit>
+
+00000078 <__bad_interrupt>:
+  78:	0c 94 00 00 	jmp	0	; 0x0 <__vectors>
+
+0000007c <main>:
+#include "serial/serial.h"
+#include "usart/usart.h"
+
+uint8_t buff_out[SCIRBUF_BUFF_SIZE];
+int main(void)
+{
+  7c:	cf 92       	push	r12
+  7e:	df 92       	push	r13
+  80:	ff 92       	push	r15
+  82:	0f 93       	push	r16
+  84:	1f 93       	push	r17
+  86:	cf 93       	push	r28
+  88:	df 93       	push	r29
+	uint8_t i;
+	uint8_t bytes_available;
+	USART_Init ( MYUBRR );
+  8a:	87 e6       	ldi	r24, 0x67	; 103
+  8c:	90 e0       	ldi	r25, 0x00	; 0
+  8e:	0e 94 82 00 	call	0x104	; 0x104 <USART_Init>
+	sei();
+  92:	78 94       	sei
+	
+	PORTA = 0x00;
+  94:	1b ba       	out	0x1b, r1	; 27
+    DDRA = 0xFF;
+  96:	8f ef       	ldi	r24, 0xFF	; 255
+  98:	8a bb       	out	0x1a, r24	; 26
+    milliseconds can be achieved.
+ */
+void
+_delay_loop_2(uint16_t __count)
+{
+	__asm__ volatile (
+  9a:	80 e9       	ldi	r24, 0x90	; 144
+  9c:	c8 2e       	mov	r12, r24
+  9e:	81 e0       	ldi	r24, 0x01	; 1
+  a0:	d8 2e       	mov	r13, r24
+
+	while(1)
+    {
+		bytes_available = scirbuf_bytes_available();
+  a2:	0e 94 ba 00 	call	0x174	; 0x174 <scirbuf_bytes_available>
+  a6:	f8 2e       	mov	r15, r24
+		if (bytes_available>0)
+  a8:	88 23       	and	r24, r24
+  aa:	d9 f0       	breq	.+54     	; 0xe2 <main+0x66>
+		{
+			scirbuf_read_nbytes(buff_out, bytes_available);
+  ac:	85 e6       	ldi	r24, 0x65	; 101
+  ae:	90 e0       	ldi	r25, 0x00	; 0
+  b0:	6f 2d       	mov	r22, r15
+  b2:	0e 94 20 01 	call	0x240	; 0x240 <scirbuf_read_nbytes>
+			USART_Transmit(bytes_available+0x30);
+  b6:	8f 2d       	mov	r24, r15
+  b8:	80 5d       	subi	r24, 0xD0	; 208
+  ba:	0e 94 89 00 	call	0x112	; 0x112 <USART_Transmit>
+  be:	05 e6       	ldi	r16, 0x65	; 101
+  c0:	10 e0       	ldi	r17, 0x00	; 0
+			for (i = 0; i<bytes_available; i++ )
+  c2:	cf 2d       	mov	r28, r15
+  c4:	d0 e0       	ldi	r29, 0x00	; 0
+  c6:	c0 0f       	add	r28, r16
+  c8:	d1 1f       	adc	r29, r17
+  ca:	05 c0       	rjmp	.+10     	; 0xd6 <main+0x5a>
+				{USART_Transmit(buff_out[i]);}
+  cc:	f8 01       	movw	r30, r16
+  ce:	81 91       	ld	r24, Z+
+  d0:	8f 01       	movw	r16, r30
+  d2:	0e 94 89 00 	call	0x112	; 0x112 <USART_Transmit>
+		bytes_available = scirbuf_bytes_available();
+		if (bytes_available>0)
+		{
+			scirbuf_read_nbytes(buff_out, bytes_available);
+			USART_Transmit(bytes_available+0x30);
+			for (i = 0; i<bytes_available; i++ )
+  d6:	0c 17       	cp	r16, r28
+  d8:	1d 07       	cpc	r17, r29
+  da:	c1 f7       	brne	.-16     	; 0xcc <main+0x50>
+				{USART_Transmit(buff_out[i]);}
+			USART_Transmit('\n');
+  dc:	8a e0       	ldi	r24, 0x0A	; 10
+  de:	0e 94 89 00 	call	0x112	; 0x112 <USART_Transmit>
+		}
+		USART_Transmit('+');USART_Transmit('-');USART_Transmit('\n');
+  e2:	8b e2       	ldi	r24, 0x2B	; 43
+  e4:	0e 94 89 00 	call	0x112	; 0x112 <USART_Transmit>
+  e8:	8d e2       	ldi	r24, 0x2D	; 45
+  ea:	0e 94 89 00 	call	0x112	; 0x112 <USART_Transmit>
+  ee:	8a e0       	ldi	r24, 0x0A	; 10
+  f0:	0e 94 89 00 	call	0x112	; 0x112 <USART_Transmit>
+  f4:	80 e3       	ldi	r24, 0x30	; 48
+  f6:	95 e7       	ldi	r25, 0x75	; 117
+  f8:	f6 01       	movw	r30, r12
+  fa:	31 97       	sbiw	r30, 0x01	; 1
+  fc:	f1 f7       	brne	.-4      	; 0xfa <main+0x7e>
+		__ticks = (uint16_t) (__ms * 10.0);
+		while(__ticks)
+		{
+			// wait 1/10 ms
+			_delay_loop_2(((F_CPU) / 4e3) / 10);
+			__ticks --;
+  fe:	01 97       	sbiw	r24, 0x01	; 1
+		__ticks = 1;
+	else if (__tmp > 65535)
+	{
+		//	__ticks = requested delay in 1/10 ms
+		__ticks = (uint16_t) (__ms * 10.0);
+		while(__ticks)
+ 100:	d9 f7       	brne	.-10     	; 0xf8 <main+0x7c>
+ 102:	cf cf       	rjmp	.-98     	; 0xa2 <main+0x26>
+
+00000104 <USART_Init>:
+#include "serial/serial.h"
+
+void USART_Init( unsigned int ubrr)
+{
+    /*Set baud rate */
+    UBRRH = (unsigned char)(ubrr>>8);
+ 104:	90 bd       	out	0x20, r25	; 32
+    UBRRL = (unsigned char)ubrr;
+ 106:	89 b9       	out	0x09, r24	; 9
+    /*Enable receiver and transmitter */
+    UCSRB = (1<<RXEN)|(1<<TXEN) | (1<<RXCIE);//Enable interrupt;
+ 108:	88 e9       	ldi	r24, 0x98	; 152
+ 10a:	8a b9       	out	0x0a, r24	; 10
+    /* Set frame format: 8data, 1stop bit */
+    //UCSRC = (0<<USBS)|(3<<UCSZ0);
+    UCSRC = (1<<URSEL)|(0<<USBS)|(3<<UCSZ0);//URSEL necesario para los atmega q comparten
+ 10c:	86 e8       	ldi	r24, 0x86	; 134
+ 10e:	80 bd       	out	0x20, r24	; 32
+}
+ 110:	08 95       	ret
+
+00000112 <USART_Transmit>:
+void USART_Transmit( unsigned char data )
+{
+    /* Wait for empty transmit buffer */
+    while ( !( UCSRA & (1<<UDRE)) )
+ 112:	5d 9b       	sbis	0x0b, 5	; 11
+ 114:	fe cf       	rjmp	.-4      	; 0x112 <USART_Transmit>
+        ;
+    /* Put data into buffer, sends the data */
+    UDR = data;
+ 116:	8c b9       	out	0x0c, r24	; 12
+}
+ 118:	08 95       	ret
+
+0000011a <USART_Receive>:
+unsigned char USART_Receive( void )
+{
+    /* Wait for data to be received */
+    while ( !(UCSRA & (1<<RXC)) )
+ 11a:	5f 9b       	sbis	0x0b, 7	; 11
+ 11c:	fe cf       	rjmp	.-4      	; 0x11a <USART_Receive>
+        ;
+    /* Get and return received data from buffer */
+    return UDR;
+ 11e:	8c b1       	in	r24, 0x0c	; 12
+}
+ 120:	08 95       	ret
+
+00000122 <USART_Flush>:
+void USART_Flush( void )
+{
+ 122:	01 c0       	rjmp	.+2      	; 0x126 <USART_Flush+0x4>
+    unsigned char dummy;
+    while ( UCSRA & (1<<RXC) ) dummy = UDR;
+ 124:	8c b1       	in	r24, 0x0c	; 12
+ 126:	5f 99       	sbic	0x0b, 7	; 11
+ 128:	fd cf       	rjmp	.-6      	; 0x124 <USART_Flush+0x2>
+}
+ 12a:	08 95       	ret
+
+0000012c <__vector_13>:
+
+ISR(USART_RXC_vect)//ATmega16, ATmega32, ATmega323, ATmega8 
+{
+ 12c:	1f 92       	push	r1
+ 12e:	0f 92       	push	r0
+ 130:	0f b6       	in	r0, 0x3f	; 63
+ 132:	0f 92       	push	r0
+ 134:	11 24       	eor	r1, r1
+ 136:	2f 93       	push	r18
+ 138:	3f 93       	push	r19
+ 13a:	4f 93       	push	r20
+ 13c:	5f 93       	push	r21
+ 13e:	6f 93       	push	r22
+ 140:	7f 93       	push	r23
+ 142:	8f 93       	push	r24
+ 144:	9f 93       	push	r25
+ 146:	af 93       	push	r26
+ 148:	bf 93       	push	r27
+ 14a:	ef 93       	push	r30
+ 14c:	ff 93       	push	r31
+	rx_handler();
+ 14e:	0e 94 85 01 	call	0x30a	; 0x30a <rx_handler>
+    //uint8_t  _udr_rx = UDR;
+	//USART_Transmit(_udr_rx );
+	//PORTA = 0x01;
+    //uint8_t u = UDR;
+}
+ 152:	ff 91       	pop	r31
+ 154:	ef 91       	pop	r30
+ 156:	bf 91       	pop	r27
+ 158:	af 91       	pop	r26
+ 15a:	9f 91       	pop	r25
+ 15c:	8f 91       	pop	r24
+ 15e:	7f 91       	pop	r23
+ 160:	6f 91       	pop	r22
+ 162:	5f 91       	pop	r21
+ 164:	4f 91       	pop	r20
+ 166:	3f 91       	pop	r19
+ 168:	2f 91       	pop	r18
+ 16a:	0f 90       	pop	r0
+ 16c:	0f be       	out	0x3f, r0	; 63
+ 16e:	0f 90       	pop	r0
+ 170:	1f 90       	pop	r1
+ 172:	18 95       	reti
+
+00000174 <scirbuf_bytes_available>:
+
+uint8_t scirbuf_bytes_available(void)
+{
+    uint8_t k, len;
+
+    if (scirbuf.uflags.bf.ov == 0)
+ 174:	80 91 6f 00 	lds	r24, 0x006F
+ 178:	80 fd       	sbrc	r24, 0
+ 17a:	05 c0       	rjmp	.+10     	; 0x186 <scirbuf_bytes_available+0x12>
+    {
+        len = scirbuf.iw - scirbuf.ir;
+ 17c:	90 91 6e 00 	lds	r25, 0x006E
+ 180:	80 91 6d 00 	lds	r24, 0x006D
+ 184:	0c c0       	rjmp	.+24     	; 0x19e <scirbuf_bytes_available+0x2a>
+    }
+    else//ov=1
+    {
+        if (scirbuf.uflags.bf.ow == 0)
+ 186:	80 91 6f 00 	lds	r24, 0x006F
+ 18a:	81 fd       	sbrc	r24, 1
+ 18c:	03 c0       	rjmp	.+6      	; 0x194 <scirbuf_bytes_available+0x20>
+        {
+            k =  scirbuf.ir;
+ 18e:	80 91 6d 00 	lds	r24, 0x006D
+ 192:	02 c0       	rjmp	.+4      	; 0x198 <scirbuf_bytes_available+0x24>
+        }
+        else//ow=1
+        {
+            //no interesa si ir es mayor, menor
+            //scirbuf.ir = scirbuf.iw;//x lectura es necesario
+            k = scirbuf.iw;
+ 194:	80 91 6e 00 	lds	r24, 0x006E
+        }
+        len = (SCIRBUF_BUFF_SIZE - k) + scirbuf.iw;
+ 198:	90 91 6e 00 	lds	r25, 0x006E
+ 19c:	9c 5f       	subi	r25, 0xFC	; 252
+ 19e:	98 1b       	sub	r25, r24
+    }
+    return len;
+}
+ 1a0:	89 2f       	mov	r24, r25
+ 1a2:	08 95       	ret
+
+000001a4 <scirbuf_write>:
+////////////////////////////////////////////////////////////////////////////////
+void scirbuf_write(uint8_t c)
+{
+    scirbuf.buffer[scirbuf.iw] = c;
+ 1a4:	e0 91 6e 00 	lds	r30, 0x006E
+ 1a8:	f0 e0       	ldi	r31, 0x00	; 0
+ 1aa:	e7 59       	subi	r30, 0x97	; 151
+ 1ac:	ff 4f       	sbci	r31, 0xFF	; 255
+ 1ae:	80 83       	st	Z, r24
+
+   if (scirbuf.uflags.bf.ov == 1)
+ 1b0:	80 91 6f 00 	lds	r24, 0x006F
+ 1b4:	80 ff       	sbrs	r24, 0
+ 1b6:	0b c0       	rjmp	.+22     	; 0x1ce <scirbuf_write+0x2a>
+   {
+      if (scirbuf.iw == scirbuf.ir)
+ 1b8:	90 91 6e 00 	lds	r25, 0x006E
+ 1bc:	80 91 6d 00 	lds	r24, 0x006D
+ 1c0:	98 17       	cp	r25, r24
+ 1c2:	29 f4       	brne	.+10     	; 0x1ce <scirbuf_write+0x2a>
+       {
+	   scirbuf.uflags.bf.ow = 1;
+ 1c4:	80 91 6f 00 	lds	r24, 0x006F
+ 1c8:	82 60       	ori	r24, 0x02	; 2
+ 1ca:	80 93 6f 00 	sts	0x006F, r24
+       }
+   }
+    
+    if (++scirbuf.iw == SCIRBUF_BUFF_SIZE)
+ 1ce:	80 91 6e 00 	lds	r24, 0x006E
+ 1d2:	8f 5f       	subi	r24, 0xFF	; 255
+ 1d4:	80 93 6e 00 	sts	0x006E, r24
+ 1d8:	80 91 6e 00 	lds	r24, 0x006E
+ 1dc:	84 30       	cpi	r24, 0x04	; 4
+ 1de:	39 f4       	brne	.+14     	; 0x1ee <scirbuf_write+0x4a>
+    {
+        scirbuf.iw = 0;//reset index
+ 1e0:	10 92 6e 00 	sts	0x006E, r1
+        scirbuf.uflags.bf.ov = 1;
+ 1e4:	80 91 6f 00 	lds	r24, 0x006F
+ 1e8:	81 60       	ori	r24, 0x01	; 1
+ 1ea:	80 93 6f 00 	sts	0x006F, r24
+ 1ee:	08 95       	ret
+
+000001f0 <scirbuf_read>:
+{
+    //uint8_t ir = scirbuf.ir++ & SCIRBUF_BUFF_SIZE_MASK;
+	//uint8_t c = scirbuf.buffer[ir];
+	
+	
+	uint8_t c = scirbuf.buffer[scirbuf.ir];
+ 1f0:	e0 91 6d 00 	lds	r30, 0x006D
+ 1f4:	f0 e0       	ldi	r31, 0x00	; 0
+ 1f6:	e7 59       	subi	r30, 0x97	; 151
+ 1f8:	ff 4f       	sbci	r31, 0xFF	; 255
+ 1fa:	e0 81       	ld	r30, Z
+
+	if (++scirbuf.ir == SCIRBUF_BUFF_SIZE)
+ 1fc:	80 91 6d 00 	lds	r24, 0x006D
+ 200:	8f 5f       	subi	r24, 0xFF	; 255
+ 202:	80 93 6d 00 	sts	0x006D, r24
+ 206:	80 91 6d 00 	lds	r24, 0x006D
+ 20a:	84 30       	cpi	r24, 0x04	; 4
+ 20c:	11 f4       	brne	.+4      	; 0x212 <scirbuf_read+0x22>
+		{scirbuf.ir = 0x00;}
+ 20e:	10 92 6d 00 	sts	0x006D, r1
+
+    if (scirbuf.ir == scirbuf.iw)
+ 212:	90 91 6d 00 	lds	r25, 0x006D
+ 216:	80 91 6e 00 	lds	r24, 0x006E
+ 21a:	98 17       	cp	r25, r24
+ 21c:	51 f4       	brne	.+20     	; 0x232 <scirbuf_read+0x42>
+    {
+        scirbuf.uflags.bf.ov = 0;
+ 21e:	80 91 6f 00 	lds	r24, 0x006F
+ 222:	8e 7f       	andi	r24, 0xFE	; 254
+ 224:	80 93 6f 00 	sts	0x006F, r24
+        scirbuf.uflags.bf.ow = 0;
+ 228:	80 91 6f 00 	lds	r24, 0x006F
+ 22c:	8d 7f       	andi	r24, 0xFD	; 253
+ 22e:	80 93 6f 00 	sts	0x006F, r24
+    }
+    return c;
+}
+ 232:	8e 2f       	mov	r24, r30
+ 234:	08 95       	ret
+
+00000236 <scirbuf_set_ir_equal_iw>:
+////////////////////////////////////////////////////////////////////////////////
+void scirbuf_set_ir_equal_iw(void)
+{
+   scirbuf.ir = scirbuf.iw;
+ 236:	80 91 6e 00 	lds	r24, 0x006E
+ 23a:	80 93 6d 00 	sts	0x006D, r24
+}
+ 23e:	08 95       	ret
+
+00000240 <scirbuf_read_nbytes>:
+////////////////////////////////////////////////////////////////////////////////
+uint8_t scirbuf_read_nbytes(uint8_t *buff_out, uint8_t n)
+{
+ 240:	cf 92       	push	r12
+ 242:	df 92       	push	r13
+ 244:	ef 92       	push	r14
+ 246:	ff 92       	push	r15
+ 248:	0f 93       	push	r16
+ 24a:	1f 93       	push	r17
+ 24c:	cf 93       	push	r28
+ 24e:	df 93       	push	r29
+ 250:	7c 01       	movw	r14, r24
+ 252:	d6 2e       	mov	r13, r22
+	//uint8_t bytes_available;
+    //bytes_available = scirbuf_bytes_available();
+
+    //if ((n > 0 ) && (bytes_available>0))
+	x = 0;
+	if (n > 0 )
+ 254:	66 23       	and	r22, r22
+ 256:	11 f4       	brne	.+4      	; 0x25c <scirbuf_read_nbytes+0x1c>
+ 258:	60 e0       	ldi	r22, 0x00	; 0
+ 25a:	4d c0       	rjmp	.+154    	; 0x2f6 <scirbuf_read_nbytes+0xb6>
+        //if (n> bytes_available)
+        //{
+        //    n = bytes_available;//truncar
+        //}
+
+        if (scirbuf.uflags.bf.ov == 0)
+ 25c:	80 91 6f 00 	lds	r24, 0x006F
+ 260:	80 fd       	sbrc	r24, 0
+ 262:	0b c0       	rjmp	.+22     	; 0x27a <scirbuf_read_nbytes+0x3a>
+ 264:	e7 01       	movw	r28, r14
+ 266:	10 e0       	ldi	r17, 0x00	; 0
+ 268:	04 c0       	rjmp	.+8      	; 0x272 <scirbuf_read_nbytes+0x32>
+        {
+            for (i=0; i<n; i++)
+            {
+                buff_out[x++] = scirbuf_read();
+ 26a:	0e 94 f8 00 	call	0x1f0	; 0x1f0 <scirbuf_read>
+ 26e:	89 93       	st	Y+, r24
+        //    n = bytes_available;//truncar
+        //}
+
+        if (scirbuf.uflags.bf.ov == 0)
+        {
+            for (i=0; i<n; i++)
+ 270:	1f 5f       	subi	r17, 0xFF	; 255
+ 272:	1d 15       	cp	r17, r13
+ 274:	d0 f3       	brcs	.-12     	; 0x26a <scirbuf_read_nbytes+0x2a>
+ 276:	6d 2d       	mov	r22, r13
+ 278:	3e c0       	rjmp	.+124    	; 0x2f6 <scirbuf_read_nbytes+0xb6>
+                buff_out[x++] = scirbuf_read();
+            }
+        }
+        else//ov=1
+        {
+            scirbuf.uflags.bf.buff_lock = 1;
+ 27a:	80 91 6f 00 	lds	r24, 0x006F
+ 27e:	84 60       	ori	r24, 0x04	; 4
+ 280:	80 93 6f 00 	sts	0x006F, r24
+                k =  scirbuf.ir;
+              else//ow=1
+                scirbuf.ir = scirbuf.iw;
+              k = scirbuf.ir;
+            */
+            if (scirbuf.uflags.bf.ow == 1)
+ 284:	80 91 6f 00 	lds	r24, 0x006F
+ 288:	81 ff       	sbrs	r24, 1
+ 28a:	04 c0       	rjmp	.+8      	; 0x294 <scirbuf_read_nbytes+0x54>
+            {
+                scirbuf.ir = scirbuf.iw;
+ 28c:	80 91 6e 00 	lds	r24, 0x006E
+ 290:	80 93 6d 00 	sts	0x006D, r24
+            }
+
+            temp = SCIRBUF_BUFF_SIZE - scirbuf.ir;
+ 294:	80 91 6d 00 	lds	r24, 0x006D
+ 298:	04 e0       	ldi	r16, 0x04	; 4
+ 29a:	08 1b       	sub	r16, r24
+
+            if ( temp >= n)
+ 29c:	0d 15       	cp	r16, r13
+ 29e:	18 f4       	brcc	.+6      	; 0x2a6 <scirbuf_read_nbytes+0x66>
+ 2a0:	e7 01       	movw	r28, r14
+ 2a2:	10 e0       	ldi	r17, 0x00	; 0
+ 2a4:	10 c0       	rjmp	.+32     	; 0x2c6 <scirbuf_read_nbytes+0x86>
+ 2a6:	1e 2d       	mov	r17, r14
+ 2a8:	c7 01       	movw	r24, r14
+ 2aa:	ec 01       	movw	r28, r24
+            {
+                for (i=0; i<n; i++)
+                {
+                    buff_out[x++] = scirbuf_read();
+ 2ac:	0e 94 f8 00 	call	0x1f0	; 0x1f0 <scirbuf_read>
+ 2b0:	89 93       	st	Y+, r24
+
+            temp = SCIRBUF_BUFF_SIZE - scirbuf.ir;
+
+            if ( temp >= n)
+            {
+                for (i=0; i<n; i++)
+ 2b2:	9e 01       	movw	r18, r28
+ 2b4:	21 1b       	sub	r18, r17
+ 2b6:	2d 15       	cp	r18, r13
+ 2b8:	c8 f3       	brcs	.-14     	; 0x2ac <scirbuf_read_nbytes+0x6c>
+ 2ba:	6d 2d       	mov	r22, r13
+ 2bc:	17 c0       	rjmp	.+46     	; 0x2ec <scirbuf_read_nbytes+0xac>
+            }
+            else
+            {
+                for (i=0; i<temp; i++)//lee todo
+                {
+                    buff_out[x++] = scirbuf_read();
+ 2be:	0e 94 f8 00 	call	0x1f0	; 0x1f0 <scirbuf_read>
+ 2c2:	89 93       	st	Y+, r24
+                    buff_out[x++] = scirbuf_read();
+                }
+            }
+            else
+            {
+                for (i=0; i<temp; i++)//lee todo
+ 2c4:	1f 5f       	subi	r17, 0xFF	; 255
+ 2c6:	10 17       	cp	r17, r16
+ 2c8:	d0 f3       	brcs	.-12     	; 0x2be <scirbuf_read_nbytes+0x7e>
+                {
+                    buff_out[x++] = scirbuf_read();
+                }
+
+                resto = n - temp; //lo q queda por leer
+ 2ca:	cd 2c       	mov	r12, r13
+ 2cc:	c0 1a       	sub	r12, r16
+ 2ce:	10 e0       	ldi	r17, 0x00	; 0
+ 2d0:	07 c0       	rjmp	.+14     	; 0x2e0 <scirbuf_read_nbytes+0xa0>
+                for (i=0; i<resto; i++)//lee todo
+                {
+                    buff_out[x++] = scirbuf_read();
+ 2d2:	0e 94 f8 00 	call	0x1f0	; 0x1f0 <scirbuf_read>
+ 2d6:	f7 01       	movw	r30, r14
+ 2d8:	ed 0d       	add	r30, r13
+ 2da:	f1 1d       	adc	r31, r1
+ 2dc:	80 83       	st	Z, r24
+                {
+                    buff_out[x++] = scirbuf_read();
+                }
+
+                resto = n - temp; //lo q queda por leer
+                for (i=0; i<resto; i++)//lee todo
+ 2de:	1f 5f       	subi	r17, 0xFF	; 255
+ 2e0:	d1 2e       	mov	r13, r17
+ 2e2:	d0 0e       	add	r13, r16
+ 2e4:	1c 15       	cp	r17, r12
+ 2e6:	a8 f3       	brcs	.-22     	; 0x2d2 <scirbuf_read_nbytes+0x92>
+ 2e8:	60 2f       	mov	r22, r16
+ 2ea:	6c 0d       	add	r22, r12
+                {
+                    buff_out[x++] = scirbuf_read();
+                }
+            }
+
+            scirbuf.uflags.bf.buff_lock = 0;
+ 2ec:	80 91 6f 00 	lds	r24, 0x006F
+ 2f0:	8b 7f       	andi	r24, 0xFB	; 251
+ 2f2:	80 93 6f 00 	sts	0x006F, r24
+        }
+    }
+
+
+    return x;//el numero de bytes leidos?
+}
+ 2f6:	86 2f       	mov	r24, r22
+ 2f8:	df 91       	pop	r29
+ 2fa:	cf 91       	pop	r28
+ 2fc:	1f 91       	pop	r17
+ 2fe:	0f 91       	pop	r16
+ 300:	ff 90       	pop	r15
+ 302:	ef 90       	pop	r14
+ 304:	df 90       	pop	r13
+ 306:	cf 90       	pop	r12
+ 308:	08 95       	ret
+
+0000030a <rx_handler>:
+////////////////////////////////////////////////////////////////////////////////
+void rx_handler(void)//call from ISR
+{
+ 30a:	0f 93       	push	r16
+ 30c:	1f 93       	push	r17
+ 30e:	cf 93       	push	r28
+ 310:	df 93       	push	r29
+    static uint8_t soft_buff[4];
+    static int8_t level;
+    uint8_t i;
+
+    
+	uint8_t char_rx  = UDR;
+ 312:	0c b1       	in	r16, 0x0c	; 12
+
+    if (scirbuf.uflags.bf.buff_lock == 1)
+ 314:	80 91 6f 00 	lds	r24, 0x006F
+ 318:	90 91 60 00 	lds	r25, 0x0060
+ 31c:	82 ff       	sbrs	r24, 2
+ 31e:	0d c0       	rjmp	.+26     	; 0x33a <rx_handler+0x30>
+    {
+        soft_buff[level++ & SOFTBUFF_SIZE_MASK] = char_rx;
+ 320:	e9 2f       	mov	r30, r25
+ 322:	ff 27       	eor	r31, r31
+ 324:	e7 fd       	sbrc	r30, 7
+ 326:	f0 95       	com	r31
+ 328:	e3 70       	andi	r30, 0x03	; 3
+ 32a:	f0 70       	andi	r31, 0x00	; 0
+ 32c:	ef 59       	subi	r30, 0x9F	; 159
+ 32e:	ff 4f       	sbci	r31, 0xFF	; 255
+ 330:	00 83       	st	Z, r16
+ 332:	9f 5f       	subi	r25, 0xFF	; 255
+ 334:	90 93 60 00 	sts	0x0060, r25
+ 338:	18 c0       	rjmp	.+48     	; 0x36a <rx_handler+0x60>
+    }
+    else
+    {
+        //hay bytes almacenados?
+        if (level > 0)
+ 33a:	19 16       	cp	r1, r25
+ 33c:	9c f4       	brge	.+38     	; 0x364 <rx_handler+0x5a>
+ 33e:	10 e0       	ldi	r17, 0x00	; 0
+        {
+            //copy to buffer + add last buffer
+            for (i=0; i<level; i++)
+ 340:	c9 2f       	mov	r28, r25
+ 342:	dd 27       	eor	r29, r29
+ 344:	c7 fd       	sbrc	r28, 7
+ 346:	d0 95       	com	r29
+ 348:	06 c0       	rjmp	.+12     	; 0x356 <rx_handler+0x4c>
+            {
+                scirbuf_write(soft_buff[i]);
+ 34a:	ef 59       	subi	r30, 0x9F	; 159
+ 34c:	ff 4f       	sbci	r31, 0xFF	; 255
+ 34e:	80 81       	ld	r24, Z
+ 350:	0e 94 d2 00 	call	0x1a4	; 0x1a4 <scirbuf_write>
+    {
+        //hay bytes almacenados?
+        if (level > 0)
+        {
+            //copy to buffer + add last buffer
+            for (i=0; i<level; i++)
+ 354:	1f 5f       	subi	r17, 0xFF	; 255
+ 356:	e1 2f       	mov	r30, r17
+ 358:	f0 e0       	ldi	r31, 0x00	; 0
+ 35a:	ec 17       	cp	r30, r28
+ 35c:	fd 07       	cpc	r31, r29
+ 35e:	ac f3       	brlt	.-22     	; 0x34a <rx_handler+0x40>
+            {
+                scirbuf_write(soft_buff[i]);
+            }
+            level = 0x00;
+ 360:	10 92 60 00 	sts	0x0060, r1
+        }
+        scirbuf_write(char_rx);
+ 364:	80 2f       	mov	r24, r16
+ 366:	0e 94 d2 00 	call	0x1a4	; 0x1a4 <scirbuf_write>
+    }
+}
+ 36a:	df 91       	pop	r29
+ 36c:	cf 91       	pop	r28
+ 36e:	1f 91       	pop	r17
+ 370:	0f 91       	pop	r16
+ 372:	08 95       	ret
+
+00000374 <_exit>:
+ 374:	f8 94       	cli
+
+00000376 <__stop_program>:
+ 376:	ff cf       	rjmp	.-2      	; 0x376 <__stop_program>

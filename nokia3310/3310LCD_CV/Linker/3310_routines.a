@@ -1,0 +1,583 @@
+;//********************************************************
+;//**** Functions for Interfacing NOKIA 3310 Display *****
+;//********************************************************
+;//Controller:	ATmega32 (Clock: 1 Mhz-internal)
+;//Compiler:		ImageCraft ICCAVR
+;//Author:		CC Dharmani, Chennai (India)
+;//Date:			Sep 2008
+;//********************************************************
+;
+;#include <mega8.h>
+;PCODE: $00000000 VOL: 0
+	#ifndef __SLEEP_DEFINED__
+;PCODE: $00000001 VOL: 0
+	#define __SLEEP_DEFINED__
+;PCODE: $00000002 VOL: 0
+	.EQU __se_bit=0x80
+;PCODE: $00000003 VOL: 0
+	.EQU __sm_mask=0x70
+;PCODE: $00000004 VOL: 0
+	.EQU __sm_powerdown=0x20
+;PCODE: $00000005 VOL: 0
+	.EQU __sm_powersave=0x30
+;PCODE: $00000006 VOL: 0
+	.EQU __sm_standby=0x60
+;PCODE: $00000007 VOL: 0
+	.EQU __sm_ext_standby=0x70
+;PCODE: $00000008 VOL: 0
+	.EQU __sm_adc_noise_red=0x10
+;PCODE: $00000009 VOL: 0
+	.SET power_ctrl_reg=mcucr
+;PCODE: $0000000A VOL: 0
+	#endif
+;PCODE: $0000000B VOL: 0
+;PCODE: $0000000C VOL: 0
+;#include <delay.h>
+;
+;#include "3310_routines.h"
+;
+;/*--------------------------------------------------------------------------------------------------
+;                                     5x7 size character generator
+;--------------------------------------------------------------------------------------------------*/
+;flash unsigned char smallFont[] =
+;{
+;     0x00, 0x00, 0x00, 0x00, 0x00,   // sp
+;     0x00, 0x00, 0x2f, 0x00, 0x00,    // !
+;     0x00, 0x07, 0x00, 0x07, 0x00,   // "
+;     0x14, 0x7f, 0x14, 0x7f, 0x14,   // #
+;     0x24, 0x2a, 0x7f, 0x2a, 0x12,   // $
+;     0xc4, 0xc8, 0x10, 0x26, 0x46,   // %
+;     0x36, 0x49, 0x55, 0x22, 0x50,   // &
+;     0x00, 0x05, 0x03, 0x00, 0x00,   // '
+;     0x00, 0x1c, 0x22, 0x41, 0x00,   // (
+;     0x00, 0x41, 0x22, 0x1c, 0x00,   // )
+;     0x14, 0x08, 0x3E, 0x08, 0x14,   // *
+;     0x08, 0x08, 0x3E, 0x08, 0x08,   // +
+;     0x00, 0x00, 0x50, 0x30, 0x00,   // ,
+;     0x10, 0x10, 0x10, 0x10, 0x10,   // -
+;     0x00, 0x60, 0x60, 0x00, 0x00,   // .
+;     0x20, 0x10, 0x08, 0x04, 0x02,   // /
+;     0x3E, 0x51, 0x49, 0x45, 0x3E,   // 0
+;     0x00, 0x42, 0x7F, 0x40, 0x00,   // 1
+;     0x42, 0x61, 0x51, 0x49, 0x46,   // 2
+;     0x21, 0x41, 0x45, 0x4B, 0x31,   // 3
+;     0x18, 0x14, 0x12, 0x7F, 0x10,   // 4
+;     0x27, 0x45, 0x45, 0x45, 0x39,   // 5
+;     0x3C, 0x4A, 0x49, 0x49, 0x30,   // 6
+;     0x01, 0x71, 0x09, 0x05, 0x03,   // 7
+;     0x36, 0x49, 0x49, 0x49, 0x36,   // 8
+;     0x06, 0x49, 0x49, 0x29, 0x1E,   // 9
+;     0x00, 0x36, 0x36, 0x00, 0x00,   // :
+;     0x00, 0x56, 0x36, 0x00, 0x00,   // ;
+;     0x08, 0x14, 0x22, 0x41, 0x00,   // <
+;     0x14, 0x14, 0x14, 0x14, 0x14,   // =
+;     0x00, 0x41, 0x22, 0x14, 0x08,   // >
+;     0x02, 0x01, 0x51, 0x09, 0x06,   // ?
+;     0x32, 0x49, 0x59, 0x51, 0x3E,   // @
+;     0x7E, 0x11, 0x11, 0x11, 0x7E,   // A
+;     0x7F, 0x49, 0x49, 0x49, 0x36,   // B
+;     0x3E, 0x41, 0x41, 0x41, 0x22,   // C
+;     0x7F, 0x41, 0x41, 0x22, 0x1C,   // D
+;     0x7F, 0x49, 0x49, 0x49, 0x41,   // E
+;     0x7F, 0x09, 0x09, 0x09, 0x01,   // F
+;     0x3E, 0x41, 0x49, 0x49, 0x7A,   // G
+;     0x7F, 0x08, 0x08, 0x08, 0x7F,   // H
+;     0x00, 0x41, 0x7F, 0x41, 0x00,   // I
+;     0x20, 0x40, 0x41, 0x3F, 0x01,   // J
+;     0x7F, 0x08, 0x14, 0x22, 0x41,   // K
+;     0x7F, 0x40, 0x40, 0x40, 0x40,   // L
+;     0x7F, 0x02, 0x0C, 0x02, 0x7F,   // M
+;     0x7F, 0x04, 0x08, 0x10, 0x7F,   // N
+;     0x3E, 0x41, 0x41, 0x41, 0x3E,   // O
+;     0x7F, 0x09, 0x09, 0x09, 0x06,   // P
+;     0x3E, 0x41, 0x51, 0x21, 0x5E,   // Q
+;     0x7F, 0x09, 0x19, 0x29, 0x46,   // R
+;     0x46, 0x49, 0x49, 0x49, 0x31,   // S
+;     0x01, 0x01, 0x7F, 0x01, 0x01,   // T
+;     0x3F, 0x40, 0x40, 0x40, 0x3F,   // U
+;     0x1F, 0x20, 0x40, 0x20, 0x1F,   // V
+;     0x3F, 0x40, 0x38, 0x40, 0x3F,   // W
+;     0x63, 0x14, 0x08, 0x14, 0x63,   // X
+;     0x07, 0x08, 0x70, 0x08, 0x07,   // Y
+;     0x61, 0x51, 0x49, 0x45, 0x43,   // Z
+;     0x00, 0x7F, 0x41, 0x41, 0x00,   // [
+;     0x55, 0x2A, 0x55, 0x2A, 0x55,   // 55
+;     0x00, 0x41, 0x41, 0x7F, 0x00,   // ]
+;     0x04, 0x02, 0x01, 0x02, 0x04,   // ^
+;     0x40, 0x40, 0x40, 0x40, 0x40,   // _
+;     0x00, 0x01, 0x02, 0x04, 0x00,   // '
+;     0x20, 0x54, 0x54, 0x54, 0x78,   // a
+;     0x7F, 0x48, 0x44, 0x44, 0x38,    // b
+;     0x38, 0x44, 0x44, 0x44, 0x20,   // c
+;     0x38, 0x44, 0x44, 0x48, 0x7F,   // d
+;     0x38, 0x54, 0x54, 0x54, 0x18,   // e
+;     0x08, 0x7E, 0x09, 0x01, 0x02,   // f
+;     0x0C, 0x52, 0x52, 0x52, 0x3E,   // g
+;     0x7F, 0x08, 0x04, 0x04, 0x78,   // h
+;     0x00, 0x44, 0x7D, 0x40, 0x00,   // i
+;     0x20, 0x40, 0x44, 0x3D, 0x00,   // j
+;     0x7F, 0x10, 0x28, 0x44, 0x00,   // k
+;     0x00, 0x41, 0x7F, 0x40, 0x00,   // l
+;     0x7C, 0x04, 0x18, 0x04, 0x78,   // m
+;     0x7C, 0x08, 0x04, 0x04, 0x78,   // n
+;     0x38, 0x44, 0x44, 0x44, 0x38,   // o
+;     0x7C, 0x14, 0x14, 0x14, 0x08,   // p
+;     0x08, 0x14, 0x14, 0x18, 0x7C,   // q
+;     0x7C, 0x08, 0x04, 0x04, 0x08,   // r
+;     0x48, 0x54, 0x54, 0x54, 0x20,   // s
+;     0x04, 0x3F, 0x44, 0x40, 0x20,   // t
+;     0x3C, 0x40, 0x40, 0x20, 0x7C,   // u
+;     0x1C, 0x20, 0x40, 0x20, 0x1C,   // v
+;     0x3C, 0x40, 0x30, 0x40, 0x3C,   // w
+;     0x44, 0x28, 0x10, 0x28, 0x44,   // x
+;     0x0C, 0x50, 0x50, 0x50, 0x3C,   // y
+;     0x44, 0x64, 0x54, 0x4C, 0x44,   // z
+;	 0x00, 0x06, 0x09, 0x09, 0x06    // º
+;};
+;
+;/*--------------------------------------------------------------------------------------------------
+;  Name         :  LCD_init
+;  Description  :  LCD controller initialization.
+;  Argument(s)  :  None.
+;  Return value :  None.
+;--------------------------------------------------------------------------------------------------*/
+;void LCD_init ( void )
+; 0000 0079 {
+
+	.CSEG
+;PCODE: $0000000D VOL: 0
+;PCODE: $0000000E VOL: 0
+; 0000 007A 
+; 0000 007B 	delay_ms(100);
+;PCODE: $0000000F VOL: 0
+;PCODE: $00000010 VOL: 0
+;PCODE: $00000011 VOL: 0
+; 0000 007C 
+; 0000 007D 	CLEAR_SCE_PIN;    //Enable LCD
+;PCODE: $00000012 VOL: 0
+;PCODE: $00000013 VOL: 0
+; 0000 007E 
+; 0000 007F 	CLEAR_RST_PIN;	//reset LCD
+;PCODE: $00000014 VOL: 0
+;PCODE: $00000015 VOL: 0
+; 0000 0080     delay_ms(100);
+;PCODE: $00000016 VOL: 0
+;PCODE: $00000017 VOL: 0
+;PCODE: $00000018 VOL: 0
+; 0000 0081     SET_RST_PIN;
+;PCODE: $00000019 VOL: 0
+;PCODE: $0000001A VOL: 0
+; 0000 0082 
+; 0000 0083 	SET_SCE_PIN;	//disable LCD
+;PCODE: $0000001B VOL: 0
+;PCODE: $0000001C VOL: 0
+; 0000 0084 
+; 0000 0085     LCD_writeCommand( 0x21 );  // LCD Extended Commands.
+;PCODE: $0000001D VOL: 0
+;PCODE: $0000001E VOL: 0
+;PCODE: $0000001F VOL: 0
+; 0000 0086     LCD_writeCommand( 0xE0 );  // Set LCD Vop (Contrast).
+;PCODE: $00000020 VOL: 0
+;PCODE: $00000021 VOL: 0
+;PCODE: $00000022 VOL: 0
+; 0000 0087     LCD_writeCommand( 0x04 );  // Set Temp coefficent.
+;PCODE: $00000023 VOL: 0
+;PCODE: $00000024 VOL: 0
+;PCODE: $00000025 VOL: 0
+; 0000 0088     LCD_writeCommand( 0x13 );  // LCD bias mode 1:48.
+;PCODE: $00000026 VOL: 0
+;PCODE: $00000027 VOL: 0
+;PCODE: $00000028 VOL: 0
+; 0000 0089     LCD_writeCommand( 0x20 );  // LCD Standard Commands, Horizontal addressing mode.
+;PCODE: $00000029 VOL: 0
+;PCODE: $0000002A VOL: 0
+;PCODE: $0000002B VOL: 0
+; 0000 008A     LCD_writeCommand( 0x0c );  // LCD in normal mode.
+;PCODE: $0000002C VOL: 0
+;PCODE: $0000002D VOL: 0
+;PCODE: $0000002E VOL: 0
+; 0000 008B 
+; 0000 008C     LCD_clear();
+;PCODE: $0000002F VOL: 0
+; 0000 008D }
+;PCODE: $00000030 VOL: 0
+;PCODE: $00000031 VOL: 0
+;
+;/*--------------------------------------------------------------------------------------------------
+;  Name         :  LCD_writeCommand
+;  Description  :  Sends command to display controller.
+;  Argument(s)  :  command -> command to be sent
+;  Return value :  None.
+;--------------------------------------------------------------------------------------------------*/
+;void LCD_writeCommand ( unsigned char command )
+; 0000 0096 {
+;PCODE: $00000032 VOL: 0
+;PCODE: $00000033 VOL: 0
+; 0000 0097     CLEAR_SCE_PIN;	  //enable LCD
+;	command -> Y+0
+;PCODE: $00000034 VOL: 0
+;PCODE: $00000035 VOL: 0
+; 0000 0098 
+; 0000 0099 	CLEAR_DC_PIN;	  //set LCD in command mode
+;PCODE: $00000036 VOL: 0
+;PCODE: $00000037 VOL: 0
+; 0000 009A 
+; 0000 009B     //  Send data to display controller.
+; 0000 009C     SPDR = command;
+;PCODE: $00000038 VOL: 0
+;PCODE: $00000039 VOL: 0
+; 0000 009D 
+; 0000 009E     //  Wait until Tx register empty.
+; 0000 009F     while ( !(SPSR & 0x80) );
+;PCODE: $0000003A VOL: 0
+;PCODE: $0000003B VOL: 0
+;PCODE: $0000003C VOL: 0
+;PCODE: $0000003D VOL: 0
+;PCODE: $0000003E VOL: 0
+;PCODE: $0000003F VOL: 0
+; 0000 00A0 
+; 0000 00A1     SET_SCE_PIN;   	 //disable LCD
+;PCODE: $00000040 VOL: 0
+;PCODE: $00000041 VOL: 0
+; 0000 00A2 }
+;PCODE: $00000042 VOL: 0
+;PCODE: $00000043 VOL: 0
+;PCODE: $00000044 VOL: 0
+;
+;/*--------------------------------------------------------------------------------------------------
+;  Name         :  LCD_writeData
+;  Description  :  Sends Data to display controller.
+;  Argument(s)  :  Data -> Data to be sent
+;  Return value :  None.
+;--------------------------------------------------------------------------------------------------*/
+;void LCD_writeData ( unsigned char Data )
+; 0000 00AB {
+;PCODE: $00000045 VOL: 0
+;PCODE: $00000046 VOL: 0
+; 0000 00AC     CLEAR_SCE_PIN;	  //enable LCD
+;	Data -> Y+0
+;PCODE: $00000047 VOL: 0
+;PCODE: $00000048 VOL: 0
+; 0000 00AD 
+; 0000 00AE 	SET_DC_PIN;	  //set LCD in Data mode
+;PCODE: $00000049 VOL: 0
+;PCODE: $0000004A VOL: 0
+; 0000 00AF 
+; 0000 00B0     //  Send data to display controller.
+; 0000 00B1     SPDR = Data;
+;PCODE: $0000004B VOL: 0
+;PCODE: $0000004C VOL: 0
+; 0000 00B2 
+; 0000 00B3     //  Wait until Tx register empty.
+; 0000 00B4     while ( !(SPSR & 0x80) );
+;PCODE: $0000004D VOL: 0
+;PCODE: $0000004E VOL: 0
+;PCODE: $0000004F VOL: 0
+;PCODE: $00000050 VOL: 0
+;PCODE: $00000051 VOL: 0
+;PCODE: $00000052 VOL: 0
+; 0000 00B5 
+; 0000 00B6     SET_SCE_PIN;   	 //disable LCD
+;PCODE: $00000053 VOL: 0
+;PCODE: $00000054 VOL: 0
+; 0000 00B7 }
+;PCODE: $00000055 VOL: 0
+;PCODE: $00000056 VOL: 0
+;PCODE: $00000057 VOL: 0
+;
+;/*--------------------------------------------------------------------------------------------------
+;  Name         :  LCD_clear
+;  Description  :  Clears the display
+;  Argument(s)  :  None.
+;  Return value :  None.
+;--------------------------------------------------------------------------------------------------*/
+;void LCD_clear ( void )
+; 0000 00C0 {
+;PCODE: $00000058 VOL: 0
+;PCODE: $00000059 VOL: 0
+; 0000 00C1     int i,j;
+; 0000 00C2 
+; 0000 00C3 	LCD_gotoXY (0,0);  	//start with (0,0) position
+;PCODE: $0000005A VOL: 0
+;	i -> R16,R17
+;	j -> R18,R19
+;PCODE: $0000005B VOL: 0
+;PCODE: $0000005C VOL: 0
+;PCODE: $0000005D VOL: 0
+;PCODE: $0000005E VOL: 0
+;PCODE: $0000005F VOL: 0
+; 0000 00C4 
+; 0000 00C5     for(i=0; i<8; i++)
+;PCODE: $00000060 VOL: 0
+;PCODE: $00000061 VOL: 0
+;PCODE: $00000062 VOL: 0
+;PCODE: $00000063 VOL: 0
+;PCODE: $00000064 VOL: 0
+;PCODE: $00000065 VOL: 0
+;PCODE: $00000066 VOL: 0
+;PCODE: $00000067 VOL: 0
+;PCODE: $00000068 VOL: 0
+; 0000 00C6 	  for(j=0; j<90; j++)
+;PCODE: $00000069 VOL: 0
+;PCODE: $0000006A VOL: 0
+;PCODE: $0000006B VOL: 0
+;PCODE: $0000006C VOL: 0
+;PCODE: $0000006D VOL: 0
+;PCODE: $0000006E VOL: 0
+;PCODE: $0000006F VOL: 0
+;PCODE: $00000070 VOL: 0
+;PCODE: $00000071 VOL: 0
+; 0000 00C7 	     LCD_writeData( 0x00 );
+;PCODE: $00000072 VOL: 0
+;PCODE: $00000073 VOL: 0
+;PCODE: $00000074 VOL: 0
+;PCODE: $00000075 VOL: 0
+;PCODE: $00000076 VOL: 0
+;PCODE: $00000077 VOL: 0
+;PCODE: $00000078 VOL: 0
+;PCODE: $00000079 VOL: 0
+; 0000 00C9 LCD_gotoXY (0,0);
+;PCODE: $0000007A VOL: 0
+;PCODE: $0000007B VOL: 0
+;PCODE: $0000007C VOL: 0
+;PCODE: $0000007D VOL: 0
+;PCODE: $0000007E VOL: 0
+;PCODE: $0000007F VOL: 0
+;PCODE: $00000080 VOL: 0
+;PCODE: $00000081 VOL: 0
+;PCODE: $00000082 VOL: 0
+;PCODE: $00000083 VOL: 0
+; 0000 00CA    // LcdSend( 0x40, LCD_CMD );
+; 0000 00CB    // LcdSend( 0x80, LCD_CMD );
+; 0000 00CC 
+; 0000 00CD }
+;PCODE: $00000084 VOL: 0
+;PCODE: $00000085 VOL: 0
+;PCODE: $00000086 VOL: 0
+;PCODE: $00000087 VOL: 0
+;
+;/*--------------------------------------------------------------------------------------------------
+;  Name         :  LCD_gotoXY
+;  Description  :  Sets cursor location to xy location corresponding to basic font size.
+;  Argument(s)  :  x - range: 0 to 84
+;  			   	  y -> range: 0 to 5
+;  Return value :  None.
+;--------------------------------------------------------------------------------------------------*/
+;void LCD_gotoXY ( unsigned char x, unsigned char y )
+; 0000 00D7 {
+;PCODE: $00000088 VOL: 0
+;PCODE: $00000089 VOL: 0
+; 0000 00D8     LCD_writeCommand (0x80 | x);   //column
+;	x -> Y+1
+;	y -> Y+0
+;PCODE: $0000008A VOL: 0
+;PCODE: $0000008B VOL: 0
+;PCODE: $0000008C VOL: 0
+;PCODE: $0000008D VOL: 0
+; 0000 00D9 	LCD_writeCommand (0x40 | y);   //row
+;PCODE: $0000008E VOL: 0
+;PCODE: $0000008F VOL: 0
+;PCODE: $00000090 VOL: 0
+;PCODE: $00000091 VOL: 0
+; 0000 00DA }
+;PCODE: $00000092 VOL: 0
+;PCODE: $00000093 VOL: 0
+;PCODE: $00000094 VOL: 0
+;
+;/*--------------------------------------------------------------------------------------------------
+;  Name         :  LCD_writeChar
+;  Description  :  Displays a character at current cursor location and increment cursor location.
+;  Argument(s)  :  ch   -> Character to write.
+;  Return value :  None.
+;--------------------------------------------------------------------------------------------------*/
+;void LCD_writeChar ( unsigned char ch)
+; 0000 00E3 {
+;PCODE: $00000095 VOL: 0
+;PCODE: $00000096 VOL: 0
+; 0000 00E4    unsigned char j;
+; 0000 00E5 
+; 0000 00E6    LCD_writeData(0x00);
+;PCODE: $00000097 VOL: 0
+;	ch -> Y+1
+;	j -> R17
+;PCODE: $00000098 VOL: 0
+;PCODE: $00000099 VOL: 0
+;PCODE: $0000009A VOL: 0
+; 0000 00E7 
+; 0000 00E8    for(j=0; j<5; j++)
+;PCODE: $0000009B VOL: 0
+;PCODE: $0000009C VOL: 0
+;PCODE: $0000009D VOL: 0
+;PCODE: $0000009E VOL: 0
+;PCODE: $0000009F VOL: 0
+;PCODE: $000000A0 VOL: 0
+;PCODE: $000000A1 VOL: 0
+;PCODE: $000000A2 VOL: 0
+;PCODE: $000000A3 VOL: 0
+; 0000 00E9      LCD_writeData( smallFont [(unsigned int)(ch-32)*5 + j] );
+;PCODE: $000000A4 VOL: 0
+;PCODE: $000000A5 VOL: 0
+;PCODE: $000000A6 VOL: 0
+;PCODE: $000000A7 VOL: 0
+;PCODE: $000000A8 VOL: 0
+;PCODE: $000000A9 VOL: 0
+;PCODE: $000000AA VOL: 0
+;PCODE: $000000AB VOL: 0
+;PCODE: $000000AC VOL: 0
+;PCODE: $000000AD VOL: 0
+;PCODE: $000000AE VOL: 0
+;PCODE: $000000AF VOL: 0
+;PCODE: $000000B0 VOL: 0
+;PCODE: $000000B1 VOL: 0
+;PCODE: $000000B2 VOL: 0
+;PCODE: $000000B3 VOL: 0
+;PCODE: $000000B4 VOL: 0
+; 0000 00EB LCD_writeData( 0x00 );
+;PCODE: $000000B5 VOL: 0
+;PCODE: $000000B6 VOL: 0
+;PCODE: $000000B7 VOL: 0
+; 0000 00EC }
+;PCODE: $000000B8 VOL: 0
+;PCODE: $000000B9 VOL: 0
+;PCODE: $000000BA VOL: 0
+;PCODE: $000000BB VOL: 0
+;PCODE: $000000BC VOL: 0
+;
+;/*--------------------------------------------------------------------------------------------------
+;  Name         :  LCD_writeString_F
+;  Description  :  Displays a character at current cursor location
+;  Argument(s)  :  string -> Pointer to ASCII string (stored in FLASH)
+;  Return value :  None.
+;--------------------------------------------------------------------------------------------------*/
+;void LCD_writeString_F ( flash unsigned char *string )
+; 0000 00F5 {
+;PCODE: $000000BD VOL: 0
+;PCODE: $000000BE VOL: 0
+; 0000 00F6     while ( *string )
+;	*string -> Y+0
+;PCODE: $000000BF VOL: 0
+;PCODE: $000000C0 VOL: 0
+;PCODE: $000000C1 VOL: 0
+;PCODE: $000000C2 VOL: 0
+;PCODE: $000000C3 VOL: 0
+; 0000 00F7         LCD_writeChar( *string++ );
+;PCODE: $000000C4 VOL: 0
+;PCODE: $000000C5 VOL: 0
+;PCODE: $000000C6 VOL: 0
+;PCODE: $000000C7 VOL: 0
+;PCODE: $000000C8 VOL: 0
+;PCODE: $000000C9 VOL: 0
+;PCODE: $000000CA VOL: 0
+;PCODE: $000000CB VOL: 0
+;PCODE: $000000CC VOL: 0
+; 0000 00F8 }
+;PCODE: $000000CD VOL: 0
+;PCODE: $000000CE VOL: 0
+;PCODE: $000000CF VOL: 0
+;
+;/*--------------------------------------------------------------------------------------------------
+;  Name         :  LCD_drawBorder
+;  Description  :  Draws rectangle border on the display
+;  Argument(s)  :  None
+;  Return value :  None
+;--------------------------------------------------------------------------------------------------*/
+;void LCD_drawBorder (void )
+; 0000 0101 {
+;PCODE: $000000D0 VOL: 0
+;PCODE: $000000D1 VOL: 0
+; 0000 0102   unsigned char i, j;
+; 0000 0103 
+; 0000 0104   for(i=0; i<7; i++)
+;PCODE: $000000D2 VOL: 0
+;	i -> R17
+;	j -> R16
+;PCODE: $000000D3 VOL: 0
+;PCODE: $000000D4 VOL: 0
+;PCODE: $000000D5 VOL: 0
+;PCODE: $000000D6 VOL: 0
+;PCODE: $000000D7 VOL: 0
+;PCODE: $000000D8 VOL: 0
+;PCODE: $000000D9 VOL: 0
+;PCODE: $000000DA VOL: 0
+;PCODE: $000000DB VOL: 0
+; 0000 0105   {
+; 0000 0106     LCD_gotoXY (0,i);
+;PCODE: $000000DC VOL: 0
+;PCODE: $000000DD VOL: 0
+;PCODE: $000000DE VOL: 0
+;PCODE: $000000DF VOL: 0
+; 0000 0107 
+; 0000 0108 	for(j=0; j<84; j++)
+;PCODE: $000000E0 VOL: 0
+;PCODE: $000000E1 VOL: 0
+;PCODE: $000000E2 VOL: 0
+;PCODE: $000000E3 VOL: 0
+;PCODE: $000000E4 VOL: 0
+;PCODE: $000000E5 VOL: 0
+;PCODE: $000000E6 VOL: 0
+;PCODE: $000000E7 VOL: 0
+;PCODE: $000000E8 VOL: 0
+; 0000 0109 	{
+; 0000 010A 	  if(j == 0 || j == 83)
+;PCODE: $000000E9 VOL: 0
+;PCODE: $000000EA VOL: 0
+;PCODE: $000000EB VOL: 0
+;PCODE: $000000EC VOL: 0
+;PCODE: $000000ED VOL: 0
+;PCODE: $000000EE VOL: 0
+;PCODE: $000000EF VOL: 0
+; 0000 010B 		LCD_writeData (0xff);		// first and last column solid fill to make line
+;PCODE: $000000F0 VOL: 0
+;PCODE: $000000F1 VOL: 0
+;PCODE: $000000F2 VOL: 0
+; 0000 010C 	  else if(i == 0)
+;PCODE: $000000F3 VOL: 0
+;PCODE: $000000F4 VOL: 0
+;PCODE: $000000F5 VOL: 0
+;PCODE: $000000F6 VOL: 0
+; 0000 010D 	    LCD_writeData (0x08);		// row 0 is having only 5 bits (not 8)
+;PCODE: $000000F7 VOL: 0
+;PCODE: $000000F8 VOL: 0
+;PCODE: $000000F9 VOL: 0
+; 0000 010E 	  else if(i == 6)
+;PCODE: $000000FA VOL: 0
+;PCODE: $000000FB VOL: 0
+;PCODE: $000000FC VOL: 0
+;PCODE: $000000FD VOL: 0
+;PCODE: $000000FE VOL: 0
+; 0000 010F 	    LCD_writeData (0x04);		// row 6 is having only 3 bits (not 8)
+;PCODE: $000000FF VOL: 0
+;PCODE: $00000100 VOL: 0
+;PCODE: $00000101 VOL: 0
+; 0000 0110 	  else
+;PCODE: $00000102 VOL: 0
+;PCODE: $00000103 VOL: 0
+; 0000 0111 	    LCD_writeData (0x00);
+;PCODE: $00000104 VOL: 0
+;PCODE: $00000105 VOL: 0
+;PCODE: $00000106 VOL: 0
+; 0000 0112 	}
+;PCODE: $00000107 VOL: 0
+;PCODE: $00000108 VOL: 0
+;PCODE: $00000109 VOL: 0
+;PCODE: $0000010A VOL: 0
+;PCODE: $0000010B VOL: 0
+;PCODE: $0000010C VOL: 0
+;PCODE: $0000010D VOL: 0
+;PCODE: $0000010E VOL: 0
+; 0000 0113   }
+;PCODE: $0000010F VOL: 0
+;PCODE: $00000110 VOL: 0
+;PCODE: $00000111 VOL: 0
+;PCODE: $00000112 VOL: 0
+;PCODE: $00000113 VOL: 0
+; 0000 0114 }
+;PCODE: $00000114 VOL: 0
+;PCODE: $00000115 VOL: 0
+;PCODE: $00000116 VOL: 0
+;
+;
+;/*--------------------------------------------------------------------------------------------------
+;                                         End of file.
+;--------------------------------------------------------------------------------------------------*/
+;

@@ -1,0 +1,13 @@
+# depslib dependency file v1.0
+1512952504 source:/run/media/jcaf/pleasure/PROYECTOS/library_jcaf/serial/serial1/main.c
+	<stdio.h>
+	<stdlib.h>
+	"serial.h"
+
+1513052146 /run/media/jcaf/pleasure/PROYECTOS/library_jcaf/serial/serial1/serial.h
+	"stdint.h"
+
+1512952504 source:/run/media/jcaf/pleasure/PROYECTOS/library_jcaf/serial/serial1/serial.c
+	<stdint.h>
+	"serial.h"
+
